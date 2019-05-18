@@ -1,22 +1,29 @@
 /*****************************************************************************/
 /*!
-\file			Reals.h
-\brief			Math Implmentation
+\file		Reals.h
+\brief		Math Implmentation
+Uploaded: 18 May 2019
 */
 /*****************************************************************************/
 #ifndef _REALS_H
 #define _REALS_H
 
 #include <cmath>
+#include <stdio.h>	//printf
 #include <limits>
 
 namespace zg
 {
+	//using double or float for vector classes
 #ifdef _DOUBLE_PRECISION
 	typedef double realtype;
 #else
 	typedef float realtype;
 #endif
+
+	//using ROW or COL major for matrix
+	//#define ROW_MAJOR 1
+	#define COL_MAJOR 1
 }
 
 #ifdef min
@@ -235,12 +242,9 @@ namespace zg {
 	ZG_API float	QuinIn			(float time, float begin, float final, float duration);
 	ZG_API float	QuinOut			(float time, float begin, float final, float duration);
 
-
 	ZG_API float	SmoothDampf		(float current, float target, float currentVelocity, float smoothTime, float maxSpeed, float deltaTime);
 
-
 #pragma endregion
-
 
 }
 

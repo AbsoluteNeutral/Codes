@@ -1,1 +1,2 @@
-Image converter: 		https://www.xnview.com/en/xnconvert/#downloads
+Image converter (xnconvert.exe): 		https://www.xnview.com/en/xnconvert/#downloads
+Snap Image (SETUNA.exe)				https://github.com/tylearymf/SETUNA2/releass

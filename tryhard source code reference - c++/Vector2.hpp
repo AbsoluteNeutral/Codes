@@ -1,13 +1,14 @@
 /*****************************************************************************/
 /*!
-\file			Vector2.h
-\brief			Vector2 implementation
+\file		Vector2.h
+\brief		Vector2 implementation
+Uploaded: 18 May 2019
 */
 /*****************************************************************************/
 #ifndef _VECTOR2_H
 #define _VECTOR2_H
 
-#include "Reals.h"
+#include "Reals.hpp"
 
 namespace zg {
 	class Vector3;
@@ -22,9 +23,9 @@ namespace zg {
 		explicit Vector2	(const Vector3& rhs)		noexcept;
 	
 		//static
-		static Vector2 Zero;
-		static Vector2 VectorX;
-		static Vector2 VectorY;
+		static const Vector2 Zero;
+		static const Vector2 VectorX;
+		static const Vector2 VectorY;
 		static Vector2 Min(const Vector2& v1, const Vector2& v2);
 		static Vector2 Max(const Vector2& v1, const Vector2& v2);
 		

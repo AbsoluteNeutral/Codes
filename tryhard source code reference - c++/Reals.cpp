@@ -5,6 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
+#include "Reals.hpp"
 
 namespace zg {
 	float ToRad(float value) { return value * PI180; }

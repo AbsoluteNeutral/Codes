@@ -5,13 +5,13 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector2.h"
+#include "Vector2.hpp"
 
 namespace zg {
 	//static
-	Vector2 Vector2::Zero = Vector2{};
-	Vector2 Vector2::VectorX = Vector2{ realtype(1.0), realtype(0.0) };
-	Vector2 Vector2::VectorY = Vector2{ realtype(0.0), realtype(1.0) };
+	const Vector2 Vector2::Zero{};
+	const Vector2 Vector2::VectorX = Vector2{ realtype(1.0), realtype(0.0) };
+	const Vector2 Vector2::VectorY = Vector2{ realtype(0.0), realtype(1.0) };
 
 	Vector2 Vector2::Min(const Vector2& v1, const Vector2& v2) {
 		return Vector2{

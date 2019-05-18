@@ -5,19 +5,33 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector3.h"
+#include "Vector3.hpp"
 
 namespace zg {
+	//static
+	const Vector3 Vector3::Zero{};
+	const Vector3 Vector3::Vector3X{ realtype(1.0), realtype(0.0), realtype(0.0) };
+	const Vector3 Vector3::Vector3Y{ realtype(0.0), realtype(1.0), realtype(0.0) };
+	const Vector3 Vector3::Vector3Z{ realtype(0.0), realtype(0.0), realtype(1.0) };
+
 	Vector3::Vector3() noexcept
-		:x(0.0f), y(0.0f), z(0.0f) {}
+		: x(0.0f), y(0.0f), z(0.0f)
+	{}
 	Vector3::Vector3(realtype x_, realtype y_) noexcept
-		:x(x_), y(y_), z(0.0f) {}
+		: x(x_), y(y_), z(0.0f) 
+	{}
 	Vector3::Vector3(realtype x_, realtype y_, realtype z_ ) noexcept
-		:x(x_), y(y_), z(z_) {}
-	Vector3::Vector3(const Vector2 &v) noexcept
-		: x(v.x), y(v.y), z(0.0f) {}
-	Vector3::Vector3(const Vector4 &v) noexcept
-		: x(v.x), y(v.y), z(v.z) {}
+		: x(x_), y(y_), z(z_) 
+	{}
+	Vector3::Vector3(const Vector2& v_, realtype z_)		noexcept
+		: x(v_.x), y(v_.y), z(z_) 
+	{}
+	Vector3::Vector3(const Vector2& v_) noexcept
+		: x(v_.x), y(v_.y), z(0.0f) 
+	{}
+	Vector3::Vector3(const Vector4& v_) noexcept
+		: x(v_.x), y(v_.y), z(v_.z)
+	{}
 	
 	//setters
 	realtype Vector3::Normalize() {
@@ -82,13 +96,8 @@ namespace zg {
 		return ApproxEqual(LengthSq(), 0.0f);
 	}
 	
-	//static
 
 	
-	Vector3 Vector3::Vector3X{ 1.0f, 0.0f, 0.0f };
-	Vector3 Vector3::Vector3Y{ 0.0f, 1.0f, 0.0f };
-	Vector3 Vector3::Vector3Z{ 0.0f, 0.0f, 1.0f };
-	Vector3 Vector3::Zero{ 0.0f, 0.0f, 0.0f };
 	
 	realtype& Vector3::operator[] (int index)				{ return (&x)[index]; }
 	realtype  Vector3::operator[] (int index) const		{ return (&x)[index]; }

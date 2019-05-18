@@ -1,13 +1,14 @@
 /*****************************************************************************/
 /*!
-\file			Vector4.h
-\brief			Vector4 Implmentation
+\file		Vector4.h
+\brief		Vector4 Implmentation
+Uploaded: 18 May 2019
 */
 /*****************************************************************************/
 #ifndef _VECTOR4_H
 #define _VECTOR4_H
 
-#include "Reals.h"
+#include "Reals.hpp"
 
 namespace zg {
 	class Vector2;
@@ -24,7 +25,7 @@ namespace zg {
 		explicit Vector4(const Vector3 &v)							noexcept;
 	
 		//static
-		static Vector4 Zero;
+		static const Vector4 Zero;
 		static Vector4 Min(const Vector4& v1, const Vector4& v2);
 		static Vector4 Max(const Vector4& v1, const Vector4& v2);
 

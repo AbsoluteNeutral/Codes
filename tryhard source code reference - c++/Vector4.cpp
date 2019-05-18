@@ -5,9 +5,12 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector4.h"
+#include "Vector4.hpp"
 
 namespace zg {
+	//static
+	const Vector4 Vector4::Zero{};
+
 	Vector4::Vector4() noexcept
 		:x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 	Vector4::Vector4(realtype x_, realtype y_, realtype z_, realtype w_) noexcept
@@ -50,7 +53,7 @@ namespace zg {
 		return ApproxEqual(LengthSq(), 0.0f);
 	}
 	
-	Vector4 Vector4::Zero{};
+	
 	Vector4 Vector4::Min(const Vector4& v0_, const Vector4& v1_) {
 		return Vector4{
 			MIN2(v0_.x, v1_.x),

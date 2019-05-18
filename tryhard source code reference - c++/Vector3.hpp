@@ -1,13 +1,14 @@
 /*****************************************************************************/
 /*!
-\file			Vector3.h
-\brief			Vector3 Implmentation
+\file		Vector3.h
+\brief		Vector3 Implmentation
+Uploaded: 18 May 2019
 */
 /*****************************************************************************/
 #ifndef _VECTOR3_H
 #define _VECTOR3_H
 
-#include "Reals.h"
+#include "Reals.hpp"
 #include <vector>
 
 namespace zg {
@@ -23,8 +24,9 @@ namespace zg {
 		Vector3			()										noexcept;
 		Vector3			(realtype x_, realtype y_)				noexcept;
 		Vector3			(realtype x_, realtype y_, realtype z_) noexcept;
-		explicit Vector3(const Vector2 &v) noexcept;
-		explicit Vector3(const Vector4 &v) noexcept;
+		explicit Vector3(const Vector2& v_, realtype z_)		noexcept;
+		explicit Vector3(const Vector2& v_)						noexcept;
+		explicit Vector3(const Vector4& v_)						noexcept;
 	
 		//setters
 		realtype	Normalize	();
@@ -45,10 +47,10 @@ namespace zg {
 		bool		IsZero					()					const;
 	
 		//static	
-		static Vector3 Zero;
-		static Vector3 Vector3X;
-		static Vector3 Vector3Y;
-		static Vector3 Vector3Z;
+		static const Vector3 Zero;
+		static const Vector3 Vector3X;
+		static const Vector3 Vector3Y;
+		static const Vector3 Vector3Z;
 		static Vector3 SmoothDamp(const Vector3& start, const Vector3& end, Vector3& velocity, realtype smoothTime, realtype maxSpeed, realtype deltaTime);
 		//operator
 		realtype& operator[](int index);
