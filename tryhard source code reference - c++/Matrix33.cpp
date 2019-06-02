@@ -345,7 +345,7 @@ namespace zg {
 
 	std::ostream& operator<<(std::ostream& os, const Matrix33& matrix_) {
 		printf("{ %.6f %.6f %.6f \n  %.6f %.6f %.6f\n  %.6f %.6f %.6f }\n",
-			matrix_.m0, matrix_.m1, matrix_.md,
+			matrix_.m0, matrix_.m1, matrix_.m2,
 			matrix_.m3, matrix_.m4, matrix_.m5,
 			matrix_.m6, matrix_.m7, matrix_.m8
 		);

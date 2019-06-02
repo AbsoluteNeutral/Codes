@@ -84,19 +84,19 @@ namespace zg {
 	};
 
 	//extern function
-	ZG_API Matrix44		BuildTranslate4x4	(float x, float y, float z);
+	ZG_API Matrix44		BuildTranslate4x4	(float x_, float y_, float z_);
 	ZG_API Matrix44		BuildTranslate4x4	(const Vector3& v_);
 	ZG_API Matrix44		BuildRotation4x4	(float degree_, const Vector3& axis_);
-	ZG_API Matrix44		BuildRotation4x4	(const Quaternion& q);
-	ZG_API Matrix44		BuildRotation4x4	(const Quaternion& q, const Vector3& translation_);
-	ZG_API Matrix44		BuildScale4x4		(float x);
-	ZG_API Matrix44		BuildScale4x4		(float x, float y, float z);
+	ZG_API Matrix44		BuildRotation4x4	(const Quaternion& q_);
+	ZG_API Matrix44		BuildRotation4x4	(const Quaternion& q_, const Vector3& translation_);
+	ZG_API Matrix44		BuildScale4x4		(float x_);
+	ZG_API Matrix44		BuildScale4x4		(float x_, float y_, float z_);
 	ZG_API Matrix44		BuildScale4x4		(const Vector3& scale_);
 
 	ZG_API void			BuildTRS			(Matrix44& m, const Vector3& translation_, const Vector3& scale_, float angleZ_);
 	ZG_API void			BuildTRS			(Matrix44& m, const Vector3& translation_, const Vector3& scale_, const Vector3& angle_);
 	ZG_API void			BuildTRS			(Matrix44& m, const Vector3& translation_, const Vector3& scale_, const Vector3& axis_, float angle_);
-	ZG_API void			BuildTRS			(Matrix44& m, const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_);
+	ZG_API Matrix44		BuildTRS4x4			(const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_);
 	
 	//ETC
 	ZG_API Matrix44		LookAtRH			(const Vector3& eye, const Vector3& target, const Vector3& up);
@@ -108,14 +108,14 @@ namespace zg {
 	ZG_API Matrix44		FrustumRH			(float left_, float right_, float bottom_, float top_, float near_, float far_);
 	ZG_API Matrix44		ViewPortTransform	(int width_, int height_);
 	
-	ZG_API float		Determinant			(const Matrix44& matrix, const int& dim);
+	ZG_API float		Determinant			(const Matrix44& matrix_, int dimension_);
 	
-	ZG_API Matrix44		GaussJordanInverse	(const Matrix44& mat);
-	ZG_API Vector3		GetTranslation		(const Matrix44& mat);
-	ZG_API Vector3		GetScale			(const Matrix44& mat);
-	ZG_API Quaternion	GetRotation			(const Matrix44& mat);
-	ZG_API Vector3		TransformPoint		(const Matrix44& mat, const Vector3& vector_);
-	ZG_API Vector3		TransformVector		(const Matrix44& mat, const Vector3& vector_);
+	ZG_API Matrix44		GaussJordanInverse	(const Matrix44& matrix_);
+	ZG_API Vector3		GetPosition			(const Matrix44& matrix_);
+	ZG_API Vector3		GetScale			(const Matrix44& matrix_);
+	ZG_API Quaternion	GetRotation			(const Matrix44& matrix_);
+	ZG_API Vector3		TransformPoint		(const Matrix44& matrix_, const Vector3& vector_);
+	ZG_API Vector3		TransformVector		(const Matrix44& matrix_, const Vector3& vector_);
 	
 	//ZG_API Matrix44		Inverse				(const Matrix44& mat);
 	

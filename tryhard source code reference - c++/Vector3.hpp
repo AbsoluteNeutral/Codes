@@ -48,6 +48,7 @@ namespace zg {
 	
 		//static	
 		static const Vector3 Zero;
+		static const Vector3 One;
 		static const Vector3 Vector3X;
 		static const Vector3 Vector3Y;
 		static const Vector3 Vector3Z;

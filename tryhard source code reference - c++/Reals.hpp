@@ -223,7 +223,7 @@ namespace zg {
 	}
 #pragma region __________________________________________________ExtraExternal	
 	ZG_API float	Absolute		(float val);
-	ZG_API float	Absolute		(double val);
+	ZG_API double	Absolute		(double val);
 	ZG_API bool		ApproxEqual		(float a, float b, float epsilon = MACHINE_EPSILON);
 	ZG_API bool		ApproxEqual		(double a, double b, double epsilon = MACHINE_EPSILON_D);
 	ZG_API float	Lerp			(float start_, float end_, float time_);

@@ -10,9 +10,10 @@
 namespace zg {
 	//static
 	const Vector3 Vector3::Zero{};
-	const Vector3 Vector3::Vector3X{ realtype(1.0), realtype(0.0), realtype(0.0) };
-	const Vector3 Vector3::Vector3Y{ realtype(0.0), realtype(1.0), realtype(0.0) };
-	const Vector3 Vector3::Vector3Z{ realtype(0.0), realtype(0.0), realtype(1.0) };
+	const Vector3 Vector3::One		{ realtype(1.0), realtype(1.0), realtype(1.0) };
+	const Vector3 Vector3::Vector3X	{ realtype(1.0), realtype(0.0), realtype(0.0) };
+	const Vector3 Vector3::Vector3Y	{ realtype(0.0), realtype(1.0), realtype(0.0) };
+	const Vector3 Vector3::Vector3Z	{ realtype(0.0), realtype(0.0), realtype(1.0) };
 
 	Vector3::Vector3() noexcept
 		: x(0.0f), y(0.0f), z(0.0f)

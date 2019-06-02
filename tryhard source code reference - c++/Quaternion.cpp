@@ -12,21 +12,23 @@ namespace zg {
 	Quaternion::Quaternion() noexcept
 		:x(0.0f), y(0.0f), z(0.0f), w(1.0f)
 	{}
-	Quaternion::Quaternion(float x_, float y_, float z_, float w_)
+	Quaternion::Quaternion(float x_, float y_, float z_, float w_) noexcept
 		: x(x_), y(y_), z(z_), w(w_)
 	{}
-	Quaternion::Quaternion(const Vector3& v, float angle){
-		float rad = TO_RAD(angle) * 0.5f;
+	Quaternion::Quaternion(const Vector3& axis_, float degree_) noexcept
+		:x(0.0f), y(0.0f), z(0.0f), w(1.0f)
+	{
+		float rad = TO_RAD(degree_) * 0.5f;
 		float s = std::sin(rad);
-		x = v.x * s;
-		y = v.y * s;
-		z = v.z * s;
+		x = axis_.x * s;
+		y = axis_.y * s;
+		z = axis_.z * s;
 		w = std::cos(rad);
 	}
 	
-	//setters
-	void Quaternion::AddScaledVector(const Vector3& vector, float scale) {
-		Quaternion q(vector.x * scale, vector.y * scale, vector.z * scale, 0.0f);
+	// ____________________________________________________________ setters
+	void Quaternion::AddScaledVector(const Vector3& vector_, float f_) {
+		Quaternion q(vector_.x * f_, vector_.y * f_, vector_.z * f_, 0.0f);
 		q *= *this;
 		x += q.x * 0.5f;
 		y += q.y * 0.5f;
@@ -37,9 +39,9 @@ namespace zg {
 	void Quaternion::Conjugate(){
 		x = -x;	y = -y;	z = -z;
 	}
-	
-	void Quaternion::Integrate(const Vector3& vector, float scale) {
-		Quaternion q(vector.x * scale, vector.y * scale, vector.z * scale, 0.0f);
+
+	void Quaternion::Integrate(const Vector3& vector_, float f_) {
+		Quaternion q(vector_.x * f_, vector_.y * f_, vector_.z * f_, 0.0f);
 		q *= *this;
 		x += q.x * 0.5f;
 		y += q.y * 0.5f;
@@ -74,16 +76,11 @@ namespace zg {
 	}
 	
 	void Quaternion::SetFromEulerAngles(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
-		//const float halfx = LoopInclude(RADIAN_x, -TWOPI, TWOPI) * 0.5f;
-		//const float halfy = LoopInclude(RADIAN_y, -TWOPI, TWOPI) * 0.5f;
-		//const float halfz = LoopInclude(RADIAN_z, -TWOPI, TWOPI) * 0.5f;
-	
 		const float halfx = RADIAN_x * 0.5f;
 		const float halfy = RADIAN_y * 0.5f;
 		const float halfz = RADIAN_z * 0.5f;
 		const Vector3 c{ std::cos(halfx), std::cos(halfy), std::cos(halfz) };
 		const Vector3 s{ std::sin(halfx), std::sin(halfy), std::sin(halfz) };
-	
 		const float cosYcosZ = c.y * c.z;
 		const float cosYsinZ = c.y * s.z;
 		const float sinYsinZ = s.y * s.z;
@@ -99,16 +96,16 @@ namespace zg {
 		w = (w > -EPSILON && w < EPSILON) ? 0.0f : w;
 	}
 	
-	void Quaternion::SetFromEulerAngles(const Vector3& v) {
-		float x_ = LoopInclude(v.x, -360.0f, 360.0f);	//v.x, 
-		float y_ = LoopInclude(v.y, -360.0f, 360.0f);	//v.y, 
-		float z_ = LoopInclude(v.z, -360.0f, 360.0f);	//v.z  
+	void Quaternion::SetFromEulerAngles(const Vector3& degree_) {
+		float x_ = degree_.x;	//v.x, 
+		float y_ = degree_.y;	//v.y, 
+		float z_ = degree_.z;	//v.z  
 		SetFromEulerAngles(TO_RAD(x_), TO_RAD(y_), TO_RAD(z_));
 	}
 	
-	//getters const 
-	float Quaternion::Dot(const Quaternion& rhs) const {
-		return x * rhs.x + y * rhs.y + z * rhs.z + w * rhs.w;
+	// ____________________________________________________________ getters 
+	float Quaternion::Dot(const Quaternion& q_) const {
+		return x * q_.x + y * q_.y + z * q_.z + w * q_.w;
 	}
 	
 	Vector3 Quaternion::GetAxis() const {
@@ -198,10 +195,12 @@ namespace zg {
 		float yys = y * ys;
 		float yzs = y * zs;
 		float zzs = z * zs;
-		return Matrix44{1.0f - yys - zzs,	xys - wzs,			xzs + wys,			0.0f,
-						xys + wzs,			1.0f - xxs - zzs,	yzs - wxs,			0.0f,
-						xzs - wys,			yzs + wxs,			1.0f - xxs - yys,	0.0f,
-						0.0f,				0.0f,				0.0f,				1.0f	};
+		return Matrix44{
+			1.0f - yys - zzs,	xys - wzs,			xzs + wys,			0.0f,
+			xys + wzs,			1.0f - xxs - zzs,	yzs - wxs,			0.0f,
+			xzs - wys,			yzs + wxs,			1.0f - xxs - yys,	0.0f,
+			0.0f,				0.0f,				0.0f,				1.0f	
+		};
 	}
 	
 	Quaternion Quaternion::Normalized() const {
@@ -240,78 +239,29 @@ namespace zg {
 		return Vector3{ x_, y_, z_ };
 	}
 	
-	//static
+	// ____________________________________________________________ static
 	Quaternion Quaternion::Identity{};
-	Vector3 Quaternion::ToEularDegree(const Quaternion& q) {
-		float sqw = q.w * q.w; 
-		float sqx = q.x * q.x;
-		float sqy = q.y * q.y;
-		float sqz = q.z * q.z;
-		float z = TO_DEG(atan2(2.0f * (q.x * q.y + q.z * q.w), (sqx - sqy - sqz + sqw)));  //z
-		float x = TO_DEG(atan2(2.0f * (q.y * q.z + q.x * q.w), (-sqx - sqy + sqz + sqw))); //x
-		float y = TO_DEG(asin(-2.0f * (q.x * q.z - q.y * q.w)));						   //y
-		x = (x > -EPSILON && x < EPSILON) ? 0.0f : x;
-		y = (y > -EPSILON && y < EPSILON) ? 0.0f : y;
-		z = (z > -EPSILON && z < EPSILON) ? 0.0f : z;
-		return Vector3{ x, y, z };
+	Vector3 Quaternion::ToEularDegree(const Quaternion& q_) {
+		return q_.ToEularDegree();
 	}
 	
 	Quaternion Quaternion::FromEulerAngles(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
-		const float halfx = RADIAN_x * 0.5f;
-		const float halfy = RADIAN_y * 0.5f;
-		const float halfz = RADIAN_z * 0.5f;
-	
-		const Vector3 c{ std::cos(halfx), std::cos(halfy), std::cos(halfz) };
-		const Vector3 s{ std::sin(halfx), std::sin(halfy), std::sin(halfz) };
-		const float cosYcosZ = c.y * c.z;
-		const float cosYsinZ = c.y * s.z;
-		const float sinYsinZ = s.y * s.z;
-		const float sinYcosZ = s.y * c.z;
-		float x = s.x * cosYcosZ - c.x * sinYsinZ;
-		float y = c.x * sinYcosZ + s.x * cosYsinZ;
-		float z = c.x * cosYsinZ - s.x * sinYcosZ;
-		float w = c.x * cosYcosZ + s.x * sinYsinZ;
-		x = (x > -EPSILON && x < EPSILON) ? 0.0f : x;
-		y = (y > -EPSILON && y < EPSILON) ? 0.0f : y;
-		z = (z > -EPSILON && z < EPSILON) ? 0.0f : z;
-		w = (w > -EPSILON && w < EPSILON) ? 0.0f : w;
-	
-		return Quaternion{ x, y, z, w };
-		//const float cx = std::cos(halfx);
-		//const float cy = std::cos(halfy);
-		//const float cz = std::cos(halfz);
-		//const float sx = std::sqrtf(1.0f - cx * cx); //std::sin(halfx);
-		//const float sy = std::sqrtf(1.0f - cy * cy); //std::sin(halfy);
-		//const float sz = std::sqrtf(1.0f - cz * cz); //std::sin(halfz);
-		//const float cosYcosZ = cy * cz;
-		//const float cosYsinZ = cy * sz;
-		//const float sinYsinZ = sy * sz;
-		//const float sinYcosZ = sy * cz;
-		//float x = sx * cosYcosZ - cx * sinYsinZ;
-		//float y = cx * sinYcosZ + sx * cosYsinZ;
-		//float z = cx * cosYsinZ - sx * sinYcosZ;
-		//float w = cx * cosYcosZ + sx * sinYsinZ;
-	
-		//x = (x > -EPSILON && x < EPSILON) ? 0.0f : x;
-		//y = (y > -EPSILON && y < EPSILON) ? 0.0f : y;
-		//z = (z > -EPSILON && z < EPSILON) ? 0.0f : z;
-		//w = (w > -EPSILON && w < EPSILON) ? 0.0f : w;
+		Quaternion q;
+		q.SetFromEulerAngles(RADIAN_x, RADIAN_y, RADIAN_z);
+		return q;
 	}
 	
-	Quaternion Quaternion::FromEulerAngles(const Vector3& v) {
-		float x = LoopInclude(v.x, -360.0f, 360.0f);	//v.x, 
-		float y = LoopInclude(v.y, -360.0f, 360.0f);	//v.y, 
-		float z = LoopInclude(v.z, -360.0f, 360.0f);	//v.z  
-	
-		return FromEulerAngles(TO_RAD(x), TO_RAD(y), TO_RAD(z));
-		//return FromEulerAngles(TO_RAD(v.x), TO_RAD(v.y), TO_RAD(v.z));
+	Quaternion Quaternion::FromEulerAngles(const Vector3& degree_) {
+		Quaternion q;
+		q.SetFromEulerAngles(degree_);
+		return q;
 	}
 	
-	Quaternion Quaternion::Slerp(const Quaternion& quaternion1, const Quaternion& quaternion2, float t) {
+	Quaternion Quaternion::Slerp(const Quaternion& q1_, const Quaternion& q2_, float time_) {
 		float invert = 1.0f;
 	
 		// Compute cos(theta) using the quaternion scalar product
-		float cosineTheta = quaternion1.Dot(quaternion2);
+		float cosineTheta = q1_.Dot(q2_);
 	
 		// Take care of the sign of cosineTheta
 		if (cosineTheta < float(0.0)) {
@@ -322,8 +272,9 @@ namespace zg {
 		// Because of precision, if cos(theta) is nearly 1,
 		// therefore theta is nearly 0 and we can write
 		// sin((1-t)*theta) as (1-t) and sin(t*theta) as t
-		if (1 - cosineTheta < EPSILON) {
-			return quaternion1 * (float(1.0f) - t) + quaternion2 * (t * invert);
+		if (1 - cosineTheta < EPSILON) 
+		{
+			return q1_ * (float(1.0f) - time_) + q2_ * (time_ * invert);
 		}
 	
 		// Compute the theta angle
@@ -333,11 +284,11 @@ namespace zg {
 		float sineTheta = std::sin(theta);
 	
 		// Compute the two coefficients that are in the spherical linear interpolation formula
-		float coeff1 = std::sin((float(1.0f) - t)*theta) / sineTheta;
-		float coeff2 = std::sin(t*theta) / sineTheta * invert;
+		float coeff1 = std::sin((float(1.0f) - time_)*theta) / sineTheta;
+		float coeff2 = std::sin(time_ * theta) / sineTheta * invert;
 	
 		// Compute and return the interpolated quaternion
-		return quaternion1 * coeff1 + quaternion2 * coeff2;
+		return q1_ * coeff1 + q2_ * coeff2;
 	}
 	
 	Quaternion Quaternion::FromToRotation(const Vector3& fromVector, const Vector3& toVector){
@@ -461,58 +412,62 @@ namespace zg {
 		//return quaternion;
 	}
 	
-	//operator
-	Quaternion& Quaternion::operator-=(const Quaternion& rhs){ x -= rhs.x;	y -= rhs.y;	z -= rhs.z;	w -= rhs.w;	return *this; }
-	Quaternion& Quaternion::operator+=(const Quaternion& rhs){ x += rhs.x;	y += rhs.y; z += rhs.z; w += rhs.w; return *this; }
-	Quaternion& Quaternion::operator*=(float f)				 { x *= f;		y *= f;		z *= f;		w *= f;		return *this; }
-	Quaternion& Quaternion::operator*=(const Quaternion& rhs){
+	// ____________________________________________________________ operator
+	bool Quaternion::operator==(const Quaternion& q2_) const { return ((x == q2_.x) && (y == q2_.y) && (z == q2_.z) && (w == q2_.w)); }
+
+	Quaternion& Quaternion::operator-=(const Quaternion& q2_){ x -= q2_.x;	y -= q2_.y;	z -= q2_.z;	w -= q2_.w;	return *this; }
+	Quaternion& Quaternion::operator+=(const Quaternion& q2_){ x += q2_.x;	y += q2_.y; z += q2_.z; w += q2_.w; return *this; }
+	Quaternion& Quaternion::operator*=(float f_)			 { x *= f_;		y *= f_;	z *= f_;	w *= f_;	return *this; }
+	Quaternion& Quaternion::operator*=(const Quaternion& q2_){
+		//Vector3 v1{ x, y, z };
+		//Vector3 v2{ q2_.x, q2_.y, q2_.z };
+		//Vector3 v3 = w * v2 + q2_.w * v1 + v1.Cross(v2);
+		//x = v3.x;
+		//y = v3.y;
+		//z = v3.z;
+		//w = w * q2_.w - v1.Dot(v2);
 		Quaternion lhs{ *this };
-		//x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
-		//y = lhs.w * rhs.y + lhs.y * rhs.w + lhs.z * rhs.x - lhs.x * rhs.z;
-		//z = lhs.w * rhs.z + lhs.z * rhs.w + lhs.x * rhs.y - lhs.y * rhs.x;
-		//w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
-	
-		w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
-		x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
-		y = lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x;
-		z = lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w;
+		w = lhs.w * q2_.w - lhs.x * q2_.x - lhs.y * q2_.y - lhs.z * q2_.z;
+		x = lhs.w * q2_.x + lhs.x * q2_.w + lhs.y * q2_.z - lhs.z * q2_.y;
+		y = lhs.w * q2_.y - lhs.x * q2_.z + lhs.y * q2_.w + lhs.z * q2_.x;
+		z = lhs.w * q2_.z + lhs.x * q2_.y - lhs.y * q2_.x + lhs.z * q2_.w;
 		return *this;
 	}
-	Quaternion& Quaternion::operator/=(float rhs) {
-		ErrorIf(rhs <= EPSILON, "Quaternion - Division by zero.");
-		float reciprocal = 1.0f / rhs;
+	Quaternion& Quaternion::operator/=(float f_) {
+		ErrorIf(f_ <= EPSILON, "Quaternion - Division by zero.");
+		float reciprocal = 1.0f / f_;
 		x *= reciprocal;
 		y *= reciprocal;
 		z *= reciprocal;
 		w *= reciprocal;
 		return *this;
 	}
-	bool Quaternion::operator==(const Quaternion &r) const { return ((x == r.x) && (y == r.y) && (z == r.z) && (w == r.w)); }
+
 	#ifdef USING_SOL2
 	Quaternion Quaternion::operator-()						const { return Quaternion{ -x, -y, -z, w }; }
-	Quaternion Quaternion::operator-(const Quaternion& rhs) const	{ return Quaternion{ x - rhs.x,	y - rhs.y,	z - rhs.z,	w - rhs.w }; }
-	Quaternion Quaternion::operator+(const Quaternion& rhs) const	{ return Quaternion{ x + rhs.x,	y + rhs.y,	z + rhs.z,	w + rhs.w }; }
+	Quaternion Quaternion::operator-(const Quaternion& q2_) const	{ return Quaternion{ x - q2_.x,	y - q2_.y,	z - q2_.z,	w - q2_.w }; }
+	Quaternion Quaternion::operator+(const Quaternion& q2_) const	{ return Quaternion{ x + q2_.x,	y + q2_.y,	z + q2_.z,	w + q2_.w }; }
 	Quaternion Quaternion::operator*(float f)			    const	{ return Quaternion{ x * f,		y * f,		z * f,		w * f	  }; }
-	Vector3 Quaternion::operator*(const Vector3& rhs)	const {
-		const float prodX = w * rhs.x + y * rhs.z - z * rhs.y;
-	    const float prodY = w * rhs.y + z * rhs.x - x * rhs.z;
-	    const float prodZ = w * rhs.z + x * rhs.y - y * rhs.x;
-	    const float prodW = -x * rhs.x - y * rhs.y - z * rhs.z;
+	Vector3 Quaternion::operator*(const Vector3& q2_)	const {
+		const float prodX = w * q2_.x + y * q2_.z - z * q2_.y;
+	    const float prodY = w * q2_.y + z * q2_.x - x * q2_.z;
+	    const float prodZ = w * q2_.z + x * q2_.y - y * q2_.x;
+	    const float prodW = -x * q2_.x - y * q2_.y - z * q2_.z;
 	    return Vector3(w * prodX - prodY * z + prodZ * y - prodW * x,
 	                   w * prodY - prodZ * x + prodX * z - prodW * y,
 	                   w * prodZ - prodX * y + prodY * x - prodW * z);
 	}
-	Quaternion Quaternion::operator*(const Quaternion& rhs) const {
+	Quaternion Quaternion::operator*(const Quaternion& q2_) const {
 		return Quaternion{
-			w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y,
-			w * rhs.y + y * rhs.w + z * rhs.x - x * rhs.z,
-			w * rhs.z + z * rhs.w + x * rhs.y - y * rhs.x,
-			w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z
+			w * q2_.x + x * q2_.w + y * q2_.z - z * q2_.y,
+			w * q2_.y + y * q2_.w + z * q2_.x - x * q2_.z,
+			w * q2_.z + z * q2_.w + x * q2_.y - y * q2_.x,
+			w * q2_.w - x * q2_.x - y * q2_.y - z * q2_.z
 		};
 	}
-	Quaternion Quaternion::operator/(float rhs) const {
-		ErrorIf(rhs <= EPSILON, "Quaternion - Division by zero.");
-		float reciprocal = 1.0f / rhs;
+	Quaternion Quaternion::operator/(float q2_) const {
+		ErrorIf(q2_ <= EPSILON, "Quaternion - Division by zero.");
+		float reciprocal = 1.0f / q2_;
 		return Quaternion{
 			x * reciprocal,
 			y * reciprocal,
@@ -574,66 +529,72 @@ namespace zg {
 		lua["Quaternion_LookRotation"] = LookRotation;
 	}
 	#else
-	Quaternion operator-(const Quaternion& lhs)						   { return Quaternion{ -lhs.x, -lhs.y, -lhs.z, lhs.w }; }
-	Quaternion operator-(const Quaternion& lhs, const Quaternion& rhs) { return Quaternion{ lhs.x - rhs.x,	lhs.y - rhs.y,	lhs.z - rhs.z,	lhs.w - rhs.w }; }
-	Quaternion operator+(const Quaternion& lhs, const Quaternion& rhs) { return Quaternion{ lhs.x + rhs.x,	lhs.y + rhs.y,	lhs.z + rhs.z,	lhs.w + rhs.w }; }
-	Vector3 operator*(const Quaternion& q, const Vector3& rhs) {
-		const float prodX = q.w * rhs.x + q.y * rhs.z - q.z * rhs.y;
-		const float prodY = q.w * rhs.y + q.z * rhs.x - q.x * rhs.z;
-		const float prodZ = q.w * rhs.z + q.x * rhs.y - q.y * rhs.x;
-		const float prodW = -q.x * rhs.x - q.y * rhs.y - q.z * rhs.z;
-		return Vector3(q.w * prodX - prodY * q.z + prodZ * q.y - prodW * q.x,
-			q.w * prodY - prodZ * q.x + prodX * q.z - prodW * q.y,
-			q.w * prodZ - prodX * q.y + prodY * q.x - prodW * q.z);
+	Quaternion operator-(const Quaternion& q1_)						   { return Quaternion{ -q1_.x, -q1_.y, -q1_.z, q1_.w }; }
+	Quaternion operator-(const Quaternion& q1_, const Quaternion& q2_) { return Quaternion{ q1_.x - q2_.x,	q1_.y - q2_.y,	q1_.z - q2_.z,	q1_.w - q2_.w }; }
+	Quaternion operator+(const Quaternion& q1_, const Quaternion& q2_) { return Quaternion{ q1_.x + q2_.x,	q1_.y + q2_.y,	q1_.z + q2_.z,	q1_.w + q2_.w }; }
+	Vector3	operator*(const Vector3& v_, const Quaternion& q1_)		   { return operator*(q1_, v_); }
+	Vector3 operator*(const Quaternion& q1_, const Vector3& v_) {
+		const float prodX = q1_.w * v_.x + q1_.y * v_.z - q1_.z * v_.y;
+		const float prodY = q1_.w * v_.y + q1_.z * v_.x - q1_.x * v_.z;
+		const float prodZ = q1_.w * v_.z + q1_.x * v_.y - q1_.y * v_.x;
+		const float prodW = -q1_.x * v_.x - q1_.y * v_.y - q1_.z * v_.z;
+		return Vector3(q1_.w * prodX - prodY * q1_.z + prodZ * q1_.y - prodW * q1_.x,
+					   q1_.w * prodY - prodZ * q1_.x + prodX * q1_.z - prodW * q1_.y,
+					   q1_.w * prodZ - prodX * q1_.y + prodY * q1_.x - prodW * q1_.z);
 	}
-	Quaternion operator*(const Quaternion& lhs, float f)	{ return Quaternion{ lhs.x * f,	lhs.y * f,	lhs.z * f,	lhs.w * f }; }
-	Quaternion operator*(const Quaternion& l, const Quaternion& r) {
-		return Quaternion{
-			l.w * r.x + l.x * r.w + l.y * r.z - l.z * r.y,
-			l.w * r.y - l.x * r.z + l.y * r.w + l.z * r.x,
-			l.w * r.z + l.x * r.y - l.y * r.x + l.z * r.w,
-			l.w * r.w - l.x * r.x - l.y * r.y - l.z * r.z
-		};
+	Quaternion operator*(const Quaternion& q1_, float f_)	{ return Quaternion{ q1_.x * f_,	q1_.y * f_,	q1_.z * f_,	q1_.w * f_ }; }
+	Quaternion operator*(float f_, const Quaternion& q1_)	{ return operator*(q1_, f_); }
+	Quaternion operator*(const Quaternion& q1_, const Quaternion& q2_) {
+		//#version 1
+		Quaternion tmp{ q1_ };
+		tmp *= q2_;
+		return tmp;
+		//#version 2
+		//return Quaternion{
+		//	q1_.w * q2_.x + q1_.x * q2_.w + q1_.y * q2_.z - q1_.z * q2_.y,
+		//	q1_.w * q2_.y - q1_.x * q2_.z + q1_.y * q2_.w + q1_.z * q2_.x,
+		//	q1_.w * q2_.z + q1_.x * q2_.y - q1_.y * q2_.x + q1_.z * q2_.w,
+		//	q1_.w * q2_.w - q1_.x * q2_.x - q1_.y * q2_.y - q1_.z * q2_.z
+		//};
 	}
-	Quaternion operator/(const Quaternion& lhs, float rhs) {
-		ErrorIf(rhs <= EPSILON, "Quaternion - Division by zero.");
-		float reciprocal = 1.0f / rhs;
+
+	Quaternion operator/(const Quaternion& q1_, float f_) {
+		ErrorIf(f_ <= EPSILON, "Quaternion - Division by zero.");
+		float reciprocal = 1.0f / f_;
 		return Quaternion{
-			lhs.x * reciprocal,
-			lhs.y * reciprocal,
-			lhs.z * reciprocal,
-			lhs.w * reciprocal
+			q1_.x * reciprocal,
+			q1_.y * reciprocal,
+			q1_.z * reciprocal,
+			q1_.w * reciprocal
 		};
 	}
 	#endif
 	
-	Quaternion Lerp(const Quaternion& start, const Quaternion& end, float tValue)
+	Quaternion Lerp(const Quaternion& start_, const Quaternion& end_, float time_)
 	{
-	  float alpha = tValue;
+	  float alpha = time_;
 	  float oneMinusAlpha = 1.0f - alpha;
-	  Quaternion quaternion(start.x * oneMinusAlpha + end.x * alpha,
-	                        start.y * oneMinusAlpha + end.y * alpha,
-	                        start.z * oneMinusAlpha + end.z * alpha,
-	                        start.w * oneMinusAlpha + end.w * alpha);
+	  Quaternion quaternion(start_.x * oneMinusAlpha + end_.x * alpha,
+	                        start_.y * oneMinusAlpha + end_.y * alpha,
+	                        start_.z * oneMinusAlpha + end_.z * alpha,
+	                        start_.w * oneMinusAlpha + end_.w * alpha);
 	
 	  return quaternion.Normalized();
 	}
 	
-	Quaternion ToQuaternion(const Matrix44& mat)
+	Quaternion ToQuaternion(const Matrix44& rot_matrix_)
 	{
-	  Quaternion res;
-	
-	  res.w = sqrt(1.0f + mat.md[0][0] + mat.md[1][1] + mat.md[2][2]) / 2.f;
-	  float w4 = 4.f * res.w;
-	  res.x = (mat.md[2][1] - mat.md[1][2]) / w4;
-	  res.y = (mat.md[0][2] - mat.md[2][0]) / w4;
-	  res.z = (mat.md[1][0] - mat.md[0][1]) / w4;
-	
-	  return res;
+		Quaternion res;
+		res.w = sqrt(1.0f + rot_matrix_.md[0][0] + rot_matrix_.md[1][1] + rot_matrix_.md[2][2]) * 0.5f;
+		float w4 = 1.0f / (4.0f * res.w);
+		res.x = (rot_matrix_.md[2][1] - rot_matrix_.md[1][2]) * w4;
+		res.y = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * w4;
+		res.z = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * w4;
+		return res;
 	}
 	
-	std::ostream& operator<<(std::ostream& os, const Quaternion& v) {
-		printf("{ %.6f %.6f %.6f %.6f }\n", v.x, v.y, v.z, v.w);
+	std::ostream& operator<<(std::ostream& os, const Quaternion& q_) {
+		printf("{ %.6f %.6f %.6f %.6f }\n", q_.x, q_.y, q_.z, q_.w);
 		//os << "{" << v.x << "," << v.y << "," << v.z << "," << v.w << "}\n";
 		return os;
 	}

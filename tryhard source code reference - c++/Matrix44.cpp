@@ -2,7 +2,6 @@
 /*!
 \file			Matrix44.cpp
 \brief			Matrix44 Implmentation
-Uploaded: 18 May 2019
 */
 /*****************************************************************************/
 #include "stdafx.h"
@@ -17,36 +16,6 @@ namespace zg {
 		0.0f, 0.0f, 0.0f, 1.0f,
 	};
 	const Matrix44 Matrix44::Zero{};
-	
-	//Matrix44 operator*(const Matrix44 &lhs, const Matrix44 &rhs) {
-	//	//return Matrix44{
-	//	//	lhs.m[0]  * rhs.m[0] + lhs.m[1]  * rhs.m[4] + lhs.m[2]  * rhs.m[8]  + lhs.m[3]  * rhs.m[12]	,
-	//	//	lhs.m[0]  * rhs.m[1] + lhs.m[1]  * rhs.m[5] + lhs.m[2]  * rhs.m[9]  + lhs.m[3]  * rhs.m[13]	,
-	//	//	lhs.m[0]  * rhs.m[2] + lhs.m[1]  * rhs.m[6] + lhs.m[2]  * rhs.m[10] + lhs.m[3]  * rhs.m[14]	,
-	//	//	lhs.m[0]  * rhs.m[3] + lhs.m[1]  * rhs.m[7] + lhs.m[2]  * rhs.m[11] + lhs.m[3]  * rhs.m[15]	,
-	//	//
-	//	//	lhs.m[4]  * rhs.m[0] + lhs.m[5]  * rhs.m[4] + lhs.m[6]  * rhs.m[8]  + lhs.m[7]  * rhs.m[12]	,
-	//	//	lhs.m[4]  * rhs.m[1] + lhs.m[5]  * rhs.m[5] + lhs.m[6]  * rhs.m[9]  + lhs.m[7]  * rhs.m[13]	,
-	//	//	lhs.m[4]  * rhs.m[2] + lhs.m[5]  * rhs.m[6] + lhs.m[6]  * rhs.m[10] + lhs.m[7]  * rhs.m[14]	,
-	//	//	lhs.m[4]  * rhs.m[3] + lhs.m[5]  * rhs.m[7] + lhs.m[6]  * rhs.m[11] + lhs.m[7]  * rhs.m[15]	,
-	//	//
-	//	//	lhs.m[8]  * rhs.m[0] + lhs.m[9]  * rhs.m[4] + lhs.m[10] * rhs.m[8]  + lhs.m[11] * rhs.m[12]	,
-	//	//	lhs.m[8]  * rhs.m[1] + lhs.m[9]  * rhs.m[5] + lhs.m[10] * rhs.m[9]  + lhs.m[11] * rhs.m[13]	,
-	//	//	lhs.m[8]  * rhs.m[2] + lhs.m[9]  * rhs.m[6] + lhs.m[10] * rhs.m[10] + lhs.m[11] * rhs.m[14]	,
-	//	//	lhs.m[8]  * rhs.m[3] + lhs.m[9]  * rhs.m[7] + lhs.m[10] * rhs.m[11] + lhs.m[11] * rhs.m[15]	,
-	//	//
-	//	//	lhs.m[12] * rhs.m[0] + lhs.m[13] * rhs.m[4] + lhs.m[14] * rhs.m[8]  + lhs.m[15] * rhs.m[12]	,
-	//	//	lhs.m[12] * rhs.m[1] + lhs.m[13] * rhs.m[5] + lhs.m[14] * rhs.m[9]  + lhs.m[15] * rhs.m[13]	,
-	//	//	lhs.m[12] * rhs.m[2] + lhs.m[13] * rhs.m[6] + lhs.m[14] * rhs.m[10] + lhs.m[15] * rhs.m[14]	,
-	//	//	lhs.m[12] * rhs.m[3] + lhs.m[13] * rhs.m[7] + lhs.m[14] * rhs.m[11] + lhs.m[15] * rhs.m[15]
-	//	//};
-	//	return Matrix44{
-	//		lhs.GetRow(0) * rhs.GetCol(0), lhs.GetRow(0) * rhs.GetCol(1), lhs.GetRow(0) * rhs.GetCol(2), lhs.GetRow(0) * rhs.GetCol(3),
-	//		lhs.GetRow(1) * rhs.GetCol(0), lhs.GetRow(1) * rhs.GetCol(1), lhs.GetRow(1) * rhs.GetCol(2), lhs.GetRow(1) * rhs.GetCol(3),
-	//		lhs.GetRow(2) * rhs.GetCol(0), lhs.GetRow(2) * rhs.GetCol(1), lhs.GetRow(2) * rhs.GetCol(2), lhs.GetRow(2) * rhs.GetCol(3),
-	//		lhs.GetRow(3) * rhs.GetCol(0), lhs.GetRow(3) * rhs.GetCol(1), lhs.GetRow(3) * rhs.GetCol(2), lhs.GetRow(3) * rhs.GetCol(3),
-	//	};
-	//}
 	
 	Matrix44::Matrix44() noexcept
 		:m{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
@@ -303,6 +272,36 @@ namespace zg {
 		Matrix44 tmp{ lhs };
 		return tmp.operator+=(rhs);
 	}
+
+	//Matrix44 operator*(const Matrix44 &lhs, const Matrix44 &rhs) {
+	//	//return Matrix44{
+	//	//	lhs.m[0]  * rhs.m[0] + lhs.m[1]  * rhs.m[4] + lhs.m[2]  * rhs.m[8]  + lhs.m[3]  * rhs.m[12]	,
+	//	//	lhs.m[0]  * rhs.m[1] + lhs.m[1]  * rhs.m[5] + lhs.m[2]  * rhs.m[9]  + lhs.m[3]  * rhs.m[13]	,
+	//	//	lhs.m[0]  * rhs.m[2] + lhs.m[1]  * rhs.m[6] + lhs.m[2]  * rhs.m[10] + lhs.m[3]  * rhs.m[14]	,
+	//	//	lhs.m[0]  * rhs.m[3] + lhs.m[1]  * rhs.m[7] + lhs.m[2]  * rhs.m[11] + lhs.m[3]  * rhs.m[15]	,
+	//	//
+	//	//	lhs.m[4]  * rhs.m[0] + lhs.m[5]  * rhs.m[4] + lhs.m[6]  * rhs.m[8]  + lhs.m[7]  * rhs.m[12]	,
+	//	//	lhs.m[4]  * rhs.m[1] + lhs.m[5]  * rhs.m[5] + lhs.m[6]  * rhs.m[9]  + lhs.m[7]  * rhs.m[13]	,
+	//	//	lhs.m[4]  * rhs.m[2] + lhs.m[5]  * rhs.m[6] + lhs.m[6]  * rhs.m[10] + lhs.m[7]  * rhs.m[14]	,
+	//	//	lhs.m[4]  * rhs.m[3] + lhs.m[5]  * rhs.m[7] + lhs.m[6]  * rhs.m[11] + lhs.m[7]  * rhs.m[15]	,
+	//	//
+	//	//	lhs.m[8]  * rhs.m[0] + lhs.m[9]  * rhs.m[4] + lhs.m[10] * rhs.m[8]  + lhs.m[11] * rhs.m[12]	,
+	//	//	lhs.m[8]  * rhs.m[1] + lhs.m[9]  * rhs.m[5] + lhs.m[10] * rhs.m[9]  + lhs.m[11] * rhs.m[13]	,
+	//	//	lhs.m[8]  * rhs.m[2] + lhs.m[9]  * rhs.m[6] + lhs.m[10] * rhs.m[10] + lhs.m[11] * rhs.m[14]	,
+	//	//	lhs.m[8]  * rhs.m[3] + lhs.m[9]  * rhs.m[7] + lhs.m[10] * rhs.m[11] + lhs.m[11] * rhs.m[15]	,
+	//	//
+	//	//	lhs.m[12] * rhs.m[0] + lhs.m[13] * rhs.m[4] + lhs.m[14] * rhs.m[8]  + lhs.m[15] * rhs.m[12]	,
+	//	//	lhs.m[12] * rhs.m[1] + lhs.m[13] * rhs.m[5] + lhs.m[14] * rhs.m[9]  + lhs.m[15] * rhs.m[13]	,
+	//	//	lhs.m[12] * rhs.m[2] + lhs.m[13] * rhs.m[6] + lhs.m[14] * rhs.m[10] + lhs.m[15] * rhs.m[14]	,
+	//	//	lhs.m[12] * rhs.m[3] + lhs.m[13] * rhs.m[7] + lhs.m[14] * rhs.m[11] + lhs.m[15] * rhs.m[15]
+	//	//};
+	//	return Matrix44{
+	//		lhs.GetRow(0) * rhs.GetCol(0), lhs.GetRow(0) * rhs.GetCol(1), lhs.GetRow(0) * rhs.GetCol(2), lhs.GetRow(0) * rhs.GetCol(3),
+	//		lhs.GetRow(1) * rhs.GetCol(0), lhs.GetRow(1) * rhs.GetCol(1), lhs.GetRow(1) * rhs.GetCol(2), lhs.GetRow(1) * rhs.GetCol(3),
+	//		lhs.GetRow(2) * rhs.GetCol(0), lhs.GetRow(2) * rhs.GetCol(1), lhs.GetRow(2) * rhs.GetCol(2), lhs.GetRow(2) * rhs.GetCol(3),
+	//		lhs.GetRow(3) * rhs.GetCol(0), lhs.GetRow(3) * rhs.GetCol(1), lhs.GetRow(3) * rhs.GetCol(2), lhs.GetRow(3) * rhs.GetCol(3),
+	//	};
+	//}
 	Matrix44 operator*(const Matrix44 &lhs, const Matrix44 &rhs) {
 		Vector4 row0{ lhs.GetRow(0) };
 		Vector4 row1{ lhs.GetRow(1) };
@@ -359,7 +358,6 @@ namespace zg {
 		return os;
 	}
 
-
 	//extern function
 	Matrix44 BuildTranslate4x4(float x_, float y_, float z_) {
 		return Matrix44{ 1.0f, 0.0f, 0.0f, x_,
@@ -368,7 +366,6 @@ namespace zg {
 						 0.0f, 0.0f, 0.0f, 1.0f };
 	}
 	Matrix44 BuildTranslate4x4(const Vector3& v_) { return BuildTranslate4x4(v_.x, v_.y, v_.z); }
-
 
 	Matrix44 BuildScale4x4(float x_) {
 			return Matrix44{ x_,    0.0f,  0.0f, 0.0f,
@@ -383,7 +380,6 @@ namespace zg {
 						0.0f, 0.0f,  0.0f, 1.0f };
 	}
 	Matrix44 BuildScale4x4(const Vector3& v_) { return BuildScale4x4(v_.x, v_.y, v_.z); }
-
 
 	Matrix44 BuildRotation4x4(float degree_, const Vector3& axis_) {
 		/*	Rotate on an axis
@@ -421,26 +417,6 @@ namespace zg {
 	}
 	Matrix44 BuildRotation4x4(const Quaternion& q)
 	{
-		//float a1 = 1.f - (q.y * q.y + q.z * q.z);
-		//float a2 = 2.f * (q.x * q.y - q.z * q.w);
-		//float a3 = 2.f * (q.x * q.z + q.y * q.w);
-		//float a4 = 0.f;
-		//float b1 = 2.f * (q.x * q.y + q.z * q.w);
-		//float b2 = 1.f - (q.x * q.x + q.z * q.z);
-		//float b3 = 2.f * (q.y * q.z - q.x * q.w);
-		//float b4 = 0.f;
-		//float c1 = 2.f * (q.x * q.z - q.y * q.w);
-		//float c2 = 2.f * (q.y * q.z + q.x * q.w);
-		//float c3 = 1.f - 2.f * (q.x * q.x + q.y * q.y);
-		//float c4 = 0.f;
-		//float d1 = 0.f;
-		//float d2 = 0.f;
-		//float d3 = 0.f;
-		//float d4 = 1.f;
-		//return Matrix44{ a1, b1, c1, d1,
-		//                 a2, b2, c2, d2,
-		//                 a3, b3, c3, d3,
-		//                 a4, b4, c4, d4 };
 		float nQ = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
 		float s = nQ > 0.0f ? 2.0f / nQ : 0.0f;
 		float xs = q.x * s;
@@ -455,10 +431,12 @@ namespace zg {
 		float yys = q.y * ys;
 		float yzs = q.y * zs;
 		float zzs = q.z * zs;
-		return Matrix44{ 1.0f - yys - zzs,	xys - wzs,			xzs + wys,			0.0f,
+		return Matrix44{ 
+			1.0f - yys - zzs,	xys - wzs,			xzs + wys,			0.0f,
 			xys + wzs,			1.0f - xxs - zzs,	yzs - wxs,			0.0f,
 			xzs - wys,			yzs + wxs,			1.0f - xxs - yys,	0.0f,
-			0.0f,				0.0f,				0.0f,				1.0f };
+			0.0f,				0.0f,				0.0f,				1.0f 
+		};
 		//float xx = q.x * q.x;
 		//float yy = q.y * q.y;
 		//float zz = q.z * q.z;
@@ -529,41 +507,29 @@ namespace zg {
 	void BuildTRS(Matrix44& m, const Vector3& translation_, const Vector3& scale_, const Vector3& axis_, float angle_) {
 		m = BuildTranslate4x4(translation_) * BuildRotation4x4(angle_, axis_) * BuildScale4x4(scale_);
 	}
-	void BuildTRS(Matrix44& m, const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_) {
-		//float xx = quaternion_.x * quaternion_.x;
-		//float yy = quaternion_.y * quaternion_.y;
-		//float zz = quaternion_.z * quaternion_.z;
-		//float xy = quaternion_.x * quaternion_.y;
-		//float xz = quaternion_.x * quaternion_.z;
-		//float yz = quaternion_.y * quaternion_.z;
-		//float wx = quaternion_.w * quaternion_.x;
-		//float wy = quaternion_.w * quaternion_.y;
-		//float wz = quaternion_.w * quaternion_.z;
-		//m = Matrix44{
-		//	1.0f - 2.0f * (yy + zz)* scale_.x,	2.0f * (xy - wz)	   * scale_.y,	2.0f * (xz + wy)	   * scale_.z, translation_.x,
-		//	2.0f * (xy + wz)	   * scale_.x,	1.0f - 2.0f * (xx + zz)* scale_.y,	2.0f * (yz - wx)	   * scale_.z, translation_.y,
-		//	2.0f * (xz - wy)	   * scale_.x,	2.0f * (yz + wx)       * scale_.y,	1.0f - 2.0f * (xx + yy)* scale_.z, translation_.z,
-		//	0.0f,								0.0f,							    0.0f,							   1.0f
-		//};
-		m = BuildTranslate4x4(translation_) * BuildRotation4x4(quaternion_) * BuildScale4x4(scale_);
-	}
-	void BuildRTS_4x4(Matrix44& m, const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_) {
-		//float xx = quaternion_.x * quaternion_.x;
-		//float yy = quaternion_.y * quaternion_.y;
-		//float zz = quaternion_.z * quaternion_.z;
-		//float xy = quaternion_.x * quaternion_.y;
-		//float xz = quaternion_.x * quaternion_.z;
-		//float yz = quaternion_.y * quaternion_.z;
-		//float wx = quaternion_.w * quaternion_.x;
-		//float wy = quaternion_.w * quaternion_.y;
-		//float wz = quaternion_.w * quaternion_.z;
-		//m = Matrix44{
-		//	1.0f - 2.0f * (yy + zz)* scale_.x,	2.0f * (xy - wz)	   * scale_.y,	2.0f * (xz + wy)	   * scale_.z, translation_.x,
-		//	2.0f * (xy + wz)	   * scale_.x,	1.0f - 2.0f * (xx + zz)* scale_.y,	2.0f * (yz - wx)	   * scale_.z, translation_.y,
-		//	2.0f * (xz - wy)	   * scale_.x,	2.0f * (yz + wx)       * scale_.y,	1.0f - 2.0f * (xx + yy)* scale_.z, translation_.z,
-		//	0.0f,								0.0f,							    0.0f,							   1.0f
-		//};
-		m = BuildRotation4x4(quaternion_) * BuildTranslate4x4(translation_) * BuildScale4x4(scale_);
+
+	Matrix44 BuildTRS4x4(const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_) {
+		//return  BuildTranslate4x4(translation_) * BuildRotation4x4(quaternion_) * BuildScale4x4(scale_);
+		float nQ = quaternion_.x * quaternion_.x + quaternion_.y * quaternion_.y + quaternion_.z * quaternion_.z + quaternion_.w * quaternion_.w;
+		float s = nQ > 0.0f ? 2.0f / nQ : 0.0f;
+		float xs = quaternion_.x * s;
+		float ys = quaternion_.y * s;
+		float zs = quaternion_.z * s;
+		float wxs = quaternion_.w * xs;
+		float wys = quaternion_.w * ys;
+		float wzs = quaternion_.w * zs;
+		float xxs = quaternion_.x * xs;
+		float xys = quaternion_.x * ys;
+		float xzs = quaternion_.x * zs;
+		float yys = quaternion_.y * ys;
+		float yzs = quaternion_.y * zs;
+		float zzs = quaternion_.z * zs;
+		return Matrix44{ 
+			(1.0f - yys - zzs) * scale_.x,	(xys - wzs		 ) * scale_.y,	(xzs + wys		 ) * scale_.z,	translation_.x,
+			(xys + wzs		 ) * scale_.x,	(1.0f - xxs - zzs) * scale_.y,	(yzs - wxs		 ) * scale_.z,	translation_.y,
+			(xzs - wys		 ) * scale_.x,	(yzs + wxs		 )*  scale_.y,	(1.0f - xxs - yys) * scale_.z,	translation_.z,
+			0.0f,							0.0f,							0.0f,							1.0f 
+		};
 	}
 #pragma endregion
 
@@ -681,10 +647,10 @@ namespace zg {
 		};
 	}
 
-	float Determinant(const Matrix44& matrix, const int& dim) {
-		if (dim == 2) {
-			if (matrix.m[0] && matrix.m[1])
-				return matrix.md[0][0] * matrix.md[1][1] - matrix.md[0][1] * matrix.md[1][0];
+	float Determinant(const Matrix44& matrix_, int dimension_) {
+		if (dimension_ == 2) {
+			if (matrix_.m[0] && matrix_.m[1])
+				return matrix_.md[0][0] * matrix_.md[1][1] - matrix_.md[0][1] * matrix_.md[1][0];
 			return 0;
 		}
 		else
@@ -692,22 +658,22 @@ namespace zg {
 			Matrix44 copy{};
 			float result = 0.0f;
 
-			for (int k = 0; k < dim; ++k)
+			for (int k = 0; k < dimension_; ++k)
 			{
-				for (int i = 1; i < dim; ++i)
+				for (int i = 1; i < dimension_; ++i)
 				{
-					for (int j = 0; j < dim; ++j)
+					for (int j = 0; j < dimension_; ++j)
 					{
 						if (j < k)
-							copy.md[i - 1][j] = matrix.md[i][j];
+							copy.md[i - 1][j] = matrix_.md[i][j];
 						else if (j > k)
-							copy.md[i - 1][j - 1] = matrix.md[i][j];
+							copy.md[i - 1][j - 1] = matrix_.md[i][j];
 					}
 				}
 				if (k & 1)
-					result -= matrix.m[k] * Determinant(copy, dim - 1);
+					result -= matrix_.m[k] * Determinant(copy, dimension_ - 1);
 				else
-					result += matrix.m[k] * Determinant(copy, dim - 1);
+					result += matrix_.m[k] * Determinant(copy, dimension_ - 1);
 			}
 			return result;
 		}
@@ -747,7 +713,7 @@ namespace zg {
 		};
 	}
 
-	Vector3 GetTranslation(const Matrix44 & matrix_)
+	Vector3 GetPosition(const Matrix44& matrix_)
 	{
 #ifdef ROW_MAJOR
 		return Vector3{ matrix_.m03, matrix_.m13, matrix_.m23 };
@@ -771,30 +737,21 @@ namespace zg {
 			Vector3{ matrix_.m20, matrix_.m21, matrix_.m22 }.Length()
 		};
 #endif
-		//Vector3 scale;
-		//scale.x = Vector3{ matrix_.md[0][0], matrix_.md[0][1], matrix_.md[0][2] }.Length();
-		//scale.y = Vector3{ matrix_.md[1][0], matrix_.md[1][1], matrix_.md[1][2] }.Length();
-		//scale.z = Vector3{ matrix_.md[2][0], matrix_.md[2][1], matrix_.md[2][2] }.Length();
-		//return scale;
 	}
 
 	Quaternion GetRotation(const Matrix44& matrix_) {
 		Matrix44 matrix = matrix_;
-		Vector3 scale = GetScale(matrix_);
+		Vector3 scale = 1.0f / GetScale(matrix_);
 
-		matrix.md[3][0] = 0.f;
-		matrix.md[3][1] = 0.f;
-		matrix.md[3][2] = 0.f;
-
-		matrix.md[0][0] /= scale.x;
-		matrix.md[0][1] /= scale.x;
-		matrix.md[0][2] /= scale.x;
-		matrix.md[1][0] /= scale.y;
-		matrix.md[1][1] /= scale.y;
-		matrix.md[1][2] /= scale.y;
-		matrix.md[2][0] /= scale.z;
-		matrix.md[2][1] /= scale.z;
-		matrix.md[2][2] /= scale.z;
+		matrix.md[0][0] *= scale.x;
+		matrix.md[0][1] *= scale.x;
+		matrix.md[0][2] *= scale.x;
+		matrix.md[1][0] *= scale.y;
+		matrix.md[1][1] *= scale.y;
+		matrix.md[1][2] *= scale.y;
+		matrix.md[2][0] *= scale.z;
+		matrix.md[2][1] *= scale.z;
+		matrix.md[2][2] *= scale.z;
 		matrix.Transpose();
 
 		return ToQuaternion(matrix);
@@ -1137,4 +1094,3 @@ namespace zg {
 #pragma endregion
 
 }//namespace zg
-

@@ -124,7 +124,7 @@ namespace zg {
 
 #pragma region __________________________________________________ExtraExternal	
 	float Absolute(float val)	{ return val < 0.0f ? -val : val;	}
-	float Absolute(double val)	{ return val < 0.0? -val : val;		}
+	double Absolute(double val)	{ return val < 0.0 ? -val : val;		}
 
 	bool ApproxEqual(float a, float b, float epsilon) {
 		return (std::fabs(a - b) < epsilon);
@@ -139,12 +139,12 @@ namespace zg {
 		//return start_ + time_* (end_ - start_);
 
 		// Precise method, which guarantees v = v1 when t = 1.
-		realtype dttmp = 1.0f - time_;
+		float dttmp = 1.0f - time_;
 		return dttmp * start_ + time_ * end_;
 	}
 	double Lerp(double start_, double end_, double time_) {
 		//return start_ + time_* (end_ - start_);
-		realtype dttmp = 1.0 - time_;
+		double dttmp = 1.0 - time_;
 		return dttmp * start_ + time_ * end_;
 	}
 
