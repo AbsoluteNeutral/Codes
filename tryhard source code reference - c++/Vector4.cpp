@@ -5,7 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector4.hpp"
+#include "Vector4.h"
 
 namespace zg {
 	//static
@@ -187,22 +187,17 @@ namespace zg {
 	Vector4 Lerp(const Vector4& start_, const Vector4& end_, float time_) {
 		// Imprecise method, which does not guarantee v = v1 when t = 1, due to floating-point arithmetic error.
 		// This form may be used when the hardware has a native fused multiply-add instruction.
-		//return Vector2{ 
-		//	start_.x + realtype(time_) * (end_.x - start_.x),
-		//	start_.y + realtype(time_) * (end_.y - start_.y),
-		//	start_.z + realtype(time_) * (end_.z- start_.z),
-		//	start_.w + realtype(time_) * (end_.w- start_.w)
-		//};
+		//return start_ + realtype(time_) * (end_ - start_);
 
 		// Precise method, which guarantees v = v1 when t = 1.
-		realtype dttmp = realtype(1) - realtype(time_);
-		return Vector4{
-			dttmp * start_.x + realtype(time_) * end_.x,
-			dttmp * start_.y + realtype(time_) * end_.y,
-			dttmp * start_.z + realtype(time_) * end_.z,
-			dttmp * start_.w + realtype(time_) * end_.w
-		};
+		Vector4 v0 = (realtype(1) - realtype(time_)) * start_;
+		Vector4 v1 = realtype(time_) * end_;
+		return v0 + v1;
 	}
+	Vector4 nLerp(const Vector4& start_, const Vector4& end_, float time_) {
+		return Lerp(start_, end_, time_).Normalized();
+	}
+
 	Vector4 LinearRand(const Vector4& v0_, const Vector4& v1_) {
 		return Vector4(sfrand(v0_.x, v1_.x), sfrand(v0_.y, v1_.y), sfrand(v0_.z, v1_.z), sfrand(v0_.w, v1_.w));
 	}

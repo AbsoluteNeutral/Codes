@@ -8,9 +8,9 @@ Uploaded: 18 May 2019
 #ifndef _MATRIX44_H
 #define _MATRIX44_H
 
-#include "Reals.hpp"
-#include "Vector3.hpp"
-#include "Quaternion.hpp"
+#include "Reals.h"
+#include "Vector3.h"
+#include "Quaternion.h"
 
 #pragma warning(disable : 4201) //nameless struct union
 

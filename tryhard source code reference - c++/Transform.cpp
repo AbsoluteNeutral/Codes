@@ -5,7 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Transform.hpp"
+#include "Transform.h"
 #include "Logging.h"
 #ifdef min
 #undef min
@@ -96,12 +96,12 @@ void Transform::SetPosition(const zg::Vector3& position_) {
 	flags |= T_DIRTY;
 }
 void Transform::SetRotation(float x_) {
-	zg::Vector3 eular{ zg::Quaternion::ToEularDegree(rotation) };
+	zg::Vector3 eular{ zg::ToEularDegree(rotation) };
 	rotation.SetFromEulerAngles(zg::Vector3{ x_, eular.y, eular.z });
 	flags |= T_DIRTY;
 }
 void Transform::SetRotation(float x_, float y_) {
-	rotation.SetFromEulerAngles(zg::Vector3{ x_, y_, zg::Quaternion::ToEularDegree(rotation).z });
+	rotation.SetFromEulerAngles(zg::Vector3{ x_, y_, zg::ToEularDegree(rotation).z });
 	flags |= T_DIRTY;
 }
 void Transform::SetRotation(float x_, float y_, float z_) {
@@ -167,12 +167,12 @@ void Transform::SetLocalPosition(const zg::Vector3& position_) {
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::SetLocalRotation(float x_) {
-	zg::Vector3 eular{ zg::Quaternion::ToEularDegree(localRotation) };
+	zg::Vector3 eular{ zg::ToEularDegree(localRotation) };
 	localRotation.SetFromEulerAngles(zg::Vector3{ x_, eular.y, eular.z });
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::SetLocalRotation(float x_, float y_) {
-	localRotation.SetFromEulerAngles(zg::Vector3{ x_, y_, zg::Quaternion::ToEularDegree(localRotation).z });
+	localRotation.SetFromEulerAngles(zg::Vector3{ x_, y_, zg::ToEularDegree(localRotation).z });
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::SetLocalRotation(float x_, float y_, float z_) {
@@ -227,11 +227,11 @@ void Transform::Translate(const zg::Vector3& translate_) {
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(float x_, float y_, float z_) {
-	rotation *= zg::Quaternion::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
+	rotation *= zg::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(const zg::Vector3& eular_) {
-	rotation *= zg::Quaternion::FromEulerAngles(eular_);
+	rotation *= zg::FromEulerAngles(eular_);
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(const zg::Quaternion& rotation_) {
@@ -275,11 +275,11 @@ void Transform::LocalTranslate(const zg::Vector3& translate_) {
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(float x_, float y_, float z_) {
-	localRotation *= zg::Quaternion::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
+	localRotation *= zg::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(const zg::Vector3& eular__) {
-	localRotation *= zg::Quaternion::FromEulerAngles(eular__);
+	localRotation *= zg::FromEulerAngles(eular__);
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(const zg::Quaternion& rotation_) {
@@ -333,6 +333,7 @@ const zg::Matrix44& Transform::GetMatrix() {
 	{
 		//should only be called by a transform with no parent
 		worldMatrix = BuildTRS4x4(position, rotation, scale);
+		//turn bit off
 		flags &= ~T_DIRTY;
 	}
 	return worldMatrix;
@@ -412,7 +413,7 @@ void Transform::Detach() {
 
 void Transform::CameraLookAt(const Transform& target_)
 {
-	rotation = zg::Quaternion::LookRotation(position - target_.position, Up(), facing);
+	rotation = zg::LookRotation(position - target_.position, Up(), facing);
 	if (parent) {
 		localRotation = rotation;
 	}
@@ -422,7 +423,7 @@ void Transform::LookAt(const Transform& target_) {
 	LookAt(target_.position);
 }
 void Transform::LookAt(const zg::Vector3& target_) {
-	rotation = zg::Quaternion::LookRotation(target_ - position, zg::Vector3::Vector3Y, facing);
+	rotation = zg::LookRotation(target_ - position, zg::Vector3::Vector3Y, facing);
 	if (parent) {
 		localRotation = rotation;
 	}
@@ -463,7 +464,7 @@ void Transform::RotateTowards(const zg::Vector3& target, float rate)
 	{
 		auto targetPos = target;
 
-		auto tRot = zg::Quaternion::LookRotation(targetPos - localPosition, zg::Vector3::Vector3Y, Forward());
+		auto tRot = zg::LookRotation(targetPos - localPosition, zg::Vector3::Vector3Y, Forward());
 
 		auto dot = localRotation.Dot(tRot);
 
@@ -475,13 +476,13 @@ void Transform::RotateTowards(const zg::Vector3& target, float rate)
 		if (dot == 0.f)
 			SetLocalRotation(tRot);
 		else
-			SetLocalRotation(zg::Quaternion::Slerp(localRotation, tRot, std::min(1.f, rate / dot)));
+			SetLocalRotation(zg::Slerp(localRotation, tRot, std::min(1.f, rate / dot)));
 	}
 	else
 	{
 		auto targetPos = target;
 
-		auto tRot = zg::Quaternion::LookRotation(targetPos - position, zg::Vector3::Vector3Y, Forward());
+		auto tRot = zg::LookRotation(targetPos - position, zg::Vector3::Vector3Y, Forward());
 
 		auto dot = rotation.Dot(tRot);
 
@@ -493,7 +494,7 @@ void Transform::RotateTowards(const zg::Vector3& target, float rate)
 		if (dot == 0.f)
 			SetRotation(tRot);
 		else
-			SetRotation(zg::Quaternion::Slerp(rotation, tRot, std::min(1.f, rate / dot)));
+			SetRotation(zg::Slerp(rotation, tRot, std::min(1.f, rate / dot)));
 	}
 }
 void Transform::RotateTowardsIgnoreHeight(const Transform & target, float rate)
@@ -505,7 +506,7 @@ void Transform::RotateTowardsIgnoreHeight(const zg::Vector3 & target, float rate
 	auto targetPos = target;
 	targetPos.y = position.y;
 
-	auto tRot = zg::Quaternion::LookRotation(targetPos - position, zg::Vector3::Vector3Y, Forward());
+	auto tRot = zg::LookRotation(targetPos - position, zg::Vector3::Vector3Y, Forward());
 
 	auto dot = rotation.Dot(tRot);
 
@@ -517,10 +518,10 @@ void Transform::RotateTowardsIgnoreHeight(const zg::Vector3 & target, float rate
 	if (dot == 0.f)
 		SetRotation(tRot);
 	else
-		SetRotation(zg::Quaternion::Slerp(rotation, tRot, std::min(1.f, rate / dot)));
+		SetRotation(zg::Slerp(rotation, tRot, std::min(1.f, rate / dot)));
 }
 void Transform::Slerp(const zg::Quaternion& q, float deltatime_) {
-	rotation = zg::Quaternion::Slerp(rotation, q, deltatime_);
+	rotation = zg::Slerp(rotation, q, deltatime_);
 	flags |= T_DIRTY;
 }
 
@@ -589,8 +590,8 @@ zg::Vector3 Transform::GetWorldScale() const {
 
 
 void Transform::dump() const {
-	zg::Vector3 eular = zg::Quaternion::ToEularDegree(rotation);
-	zg::Vector3 localEular = zg::Quaternion::ToEularDegree(localRotation);
+	zg::Vector3 eular = zg::ToEularDegree(rotation);
+	zg::Vector3 localEular = zg::ToEularDegree(localRotation);
 	printf("worldT: %15.6f %15.6f %15.6f \nworldR: %15.6f %15.6f %15.6f \n\
 worldS: %15.6f %15.6f %15.6f \n\
 localT: %15.6f %15.6f %15.6f \n\
@@ -668,7 +669,7 @@ void Transform::Unserial(FXMLElement* pElem){
 	getEuler.x = pSubElem->FloatAttribute("x");
 	getEuler.y = pSubElem->FloatAttribute("y");
 	getEuler.z = pSubElem->FloatAttribute("z");
-	rotation = zg::Quaternion::FromEulerAngles(getEuler);
+	rotation = zg::FromEulerAngles(getEuler);
 
 	pSubElem = pSubElem->NextSiblingElement();
 
@@ -711,7 +712,7 @@ Transform InterpolateTransforms(const Transform& oldTransform,
 
 	zg::Vector3 interPosition = oldTransform.position * (float(1.0) - factor) +
 		newTransform.position * factor;
-	zg::Quaternion interOrientation = zg::Quaternion::Slerp(oldTransform.rotation,
+	zg::Quaternion interOrientation = zg::Slerp(oldTransform.rotation,
 		newTransform.rotation, factor);
 	return Transform(interPosition, interOrientation, zg::Vector3::One);
 }

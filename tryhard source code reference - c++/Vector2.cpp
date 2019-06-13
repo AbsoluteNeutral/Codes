@@ -5,7 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector2.hpp"
+#include "Vector2.h"
 
 namespace zg {
 	//static
@@ -231,17 +231,15 @@ namespace zg {
 	Vector2 Lerp(const Vector2& start_, const Vector2& end_, float time_) {
 		// Imprecise method, which does not guarantee v = v1 when t = 1, due to floating-point arithmetic error.
 		// This form may be used when the hardware has a native fused multiply-add instruction.
-		//return Vector2{ 
-		//	start_.x + realtype(time_) * (end_.x - start_.x),
-		//	start_.y + realtype(time_) * (end_.y - start_.y)
-		//};
+		//return start_ + realtype(time_) * (end_ - start_);
 
 		// Precise method, which guarantees v = v1 when t = 1.
-		realtype dttmp = realtype(1) - realtype(time_);
-		return Vector2{
-			dttmp * start_.x + realtype(time_) * end_.x,
-			dttmp * start_.y + realtype(time_) * end_.y
-		};
+		Vector2 v0 = (realtype(1) - realtype(time_)) * start_;
+		Vector2 v1 = realtype(time_) * end_;
+		return v0 + v1;
+	}
+	Vector2 nLerp(const Vector2& start_, const Vector2& end_, float time_) {
+		return Lerp(start_, end_, time_).Normalized();
 	}
 
 	Vector2 LinearRand(const Vector2& v0_, const Vector2& v1_) {

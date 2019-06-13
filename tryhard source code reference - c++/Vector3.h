@@ -8,7 +8,7 @@ Uploaded: 18 May 2019
 #ifndef _VECTOR3_H
 #define _VECTOR3_H
 
-#include "Reals.hpp"
+#include "Reals.h"
 #include <vector>
 
 namespace zg {
@@ -113,6 +113,9 @@ namespace zg {
 	ZG_API realtype		Length				(const Vector3& v_);
 	ZG_API realtype		LengthSq			(const Vector3& v_);
 	ZG_API Vector3		Lerp				(const Vector3& start_, const Vector3& end_, float time_);
+	ZG_API Vector3		nLerp				(const Vector3& start_, const Vector3& end_, float time_);
+	ZG_API Vector3		LerpDelta			(const Vector3& start_, Vector3& deltaOf_end_start_, float time_);
+	ZG_API Vector3		nLerpDelta			(const Vector3& start_, Vector3& deltaOf_end_start_, float time_);
 	ZG_API Vector3		LinearRand			(const Vector3& v0_, const Vector3& v1_);
 	ZG_API realtype		Magnitude			(const Vector3& v_);
 	ZG_API realtype		MagnitudeSq			(const Vector3& v_);
@@ -125,8 +128,8 @@ namespace zg {
 	ZG_API Vector3		ProjectOnPlane		(const Vector3& vector, const Vector3& planeNormal);
 	ZG_API Vector3		Reflect				(const Vector3& vector, const Vector3& planeNormal);
 	ZG_API Vector3		Reject				(const Vector3& a, const Vector3& b);
-	ZG_API Vector3		Slerp				(Vector3 a, Vector3 b, realtype t);
-	ZG_API Vector3		SlerpClamp			(Vector3 a, Vector3 b, realtype t);
+	ZG_API Vector3		Slerp				(Vector3 v0_, Vector3 v1_, realtype time_);
+	ZG_API Vector3		SlerpClamp			(Vector3 v0_, Vector3 v1_, realtype time_);
 	ZG_API void			ToSpherical			(const Vector3& vector, realtype &rad, realtype &theta, realtype &phi);
 	ZG_API Vector3		Orthogonal			(const Vector3& v);
 

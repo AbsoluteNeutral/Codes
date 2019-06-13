@@ -5,7 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Color.hpp"
+#include "Color.h"
 
 namespace zg {
 	Color::Color() noexcept

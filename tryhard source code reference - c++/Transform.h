@@ -9,7 +9,7 @@
 #define _TRANSFORM_H
 
 #include "XMLWrap.h"
-#include "Reals.hpp"
+#include "Reals.h"
 
 enum ZG_API TRANSFORM_FLAG_ENUM {
 	T_DIRTY				= 0x00000001,	//track wheather the matrix have been concatenated

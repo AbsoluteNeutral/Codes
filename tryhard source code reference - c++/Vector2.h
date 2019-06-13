@@ -8,7 +8,7 @@ Uploaded: 18 May 2019
 #ifndef _VECTOR2_H
 #define _VECTOR2_H
 
-#include "Reals.hpp"
+#include "Reals.h"
 
 namespace zg {
 	class Vector3;
@@ -96,6 +96,7 @@ namespace zg {
 	ZG_API realtype Length			(const Vector2& v_);
 	ZG_API realtype LengthSq		(const Vector2& v_);
 	ZG_API Vector2	Lerp			(const Vector2& start_, const Vector2& end_, float time_);
+	ZG_API Vector2	nLerp			(const Vector2& start_, const Vector2& end_, float time_);
 	ZG_API Vector2	LinearRand		(const Vector2& v0_, const Vector2& v1_);
 	ZG_API realtype Magnitude		(const Vector2& v_);
 	ZG_API realtype MagnitudeSq		(const Vector2& v_);

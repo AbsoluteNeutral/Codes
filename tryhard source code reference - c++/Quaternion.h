@@ -8,7 +8,7 @@ Uploaded: 18 May 2019
 #ifndef _QUATERNION_H
 #define _QUATERNION_H
 
-#include "Vector3.hpp"
+#include "Vector3.h"
 
 namespace zg {
 	class Matrix33;
@@ -52,12 +52,6 @@ namespace zg {
 
 		// ____________________________________________________________ static
 		static Quaternion Identity;
-		static Vector3 ToEularDegree		(const Quaternion& q);
-		static Quaternion FromEulerAngles	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
-		static Quaternion FromEulerAngles	(const Vector3& DEGREE_);
-		static Quaternion Slerp				(const Quaternion& quaternion1, const Quaternion& quaternion2, float t);
-		static Quaternion FromToRotation	(const Vector3& fromVector, const Vector3& toVector);
-		static Quaternion LookRotation		(const Vector3& forward, const Vector3& upwards, const Vector3& front);
 	
 		// ____________________________________________________________ operator
 		bool operator==			(const Quaternion& q2_)	const;
@@ -69,7 +63,7 @@ namespace zg {
 		Quaternion& operator/=	(float f_);
 		
 	#ifdef USING_SOL2
-		Quaternion operator-()				const;
+		Quaternion operator-	()						const;
 		Quaternion operator-	(const Quaternion& rhs) const;
 		Quaternion operator+	(const Quaternion& rhs) const;
 		Quaternion operator*	(float rhs)				const;
@@ -78,7 +72,7 @@ namespace zg {
 		Quaternion operator/	(float rhs)				const;
 		static void BindLua(sol::state& lua);
 	#else
-		ZG_API friend Quaternion operator-(const Quaternion& q1_);
+		ZG_API friend Quaternion operator-(const Quaternion& q1_);							//Conjugate
 		ZG_API friend Quaternion operator-(const Quaternion& q1_, const Quaternion& q2_);
 		ZG_API friend Quaternion operator+(const Quaternion& q1_, const Quaternion& q2_);
 		ZG_API friend Quaternion operator*(const Quaternion& q1_, float f_);
@@ -86,15 +80,22 @@ namespace zg {
 		ZG_API friend Vector3	 operator*(const Quaternion& q1_, const Vector3& v_);
 		ZG_API friend Vector3	 operator*(const Vector3& v_, const Quaternion& q1_);
 		ZG_API friend Quaternion operator*(const Quaternion& q1_, const Quaternion& q2_);
+		ZG_API friend Quaternion operator/(const Quaternion& lhs, float rhs);
 	#endif
 		ZG_API friend std::ostream& operator<<(std::ostream& os, const Quaternion& v_);
 	
 	private:
 		
 	};
-	Quaternion operator/(const Quaternion& lhs, float rhs);
-	ZG_API Quaternion Lerp(const Quaternion& start_, const Quaternion& end_, float time_);
-	ZG_API Quaternion ToQuaternion(const Matrix44& rot_matrix_);
+	
+	ZG_API Vector3		ToEularDegree	(const Quaternion& q_);
+	ZG_API Quaternion	FromEulerAngles	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
+	ZG_API Quaternion	FromEulerAngles	(const Vector3& DEGREE_);
+	ZG_API Quaternion	FromToRotation	(const Vector3& fromVector, const Vector3& toVector);
+	ZG_API Quaternion	LookRotation	(const Vector3& forward, const Vector3& upwards, const Vector3& front);
+	ZG_API Quaternion	nLerp			(const Quaternion& start_, const Quaternion& end_, float time_);
+	ZG_API Quaternion	Slerp			(const Quaternion& q1_, const Quaternion& q2_, float time_);
+	ZG_API Quaternion	ToQuaternion	(const Matrix44& rot_matrix_);
 
 } //namespace zg
 

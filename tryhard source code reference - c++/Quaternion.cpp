@@ -5,7 +5,8 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Quaternion.hpp"
+#include <stdio.h>
+#include "Quaternion.h"
 
 namespace zg {
 
@@ -41,12 +42,13 @@ namespace zg {
 	}
 
 	void Quaternion::Integrate(const Vector3& vector_, float f_) {
-		Quaternion q(vector_.x * f_, vector_.y * f_, vector_.z * f_, 0.0f);
-		q *= *this;
-		x += q.x * 0.5f;
-		y += q.y * 0.5f;
-		z += q.z * 0.5f;
-		w += q.w * 0.5f;
+		AddScaledVector(vector_, f_);
+		//Quaternion q(vector_.x * f_, vector_.y * f_, vector_.z * f_, 0.0f);
+		//q *= *this;
+		//x += q.x * 0.5f;
+		//y += q.y * 0.5f;
+		//z += q.z * 0.5f;
+		//w += q.w * 0.5f;
 	}
 	void Quaternion::Invert() {
 		float lengthSq = LengthSq();
@@ -211,12 +213,8 @@ namespace zg {
 		return Quaternion{ x * len, y * len, z * len, w * len };
 	}
 	
-	Vector3 Quaternion::GetRotatedVector(const Vector3& vector) const {
-		Quaternion tempVec{ vector.x, vector.y, vector.z, 0.0f };
-		Quaternion result(*this);
-		result *= tempVec;
-		result *= GetConjugated();
-		return Vector3{ result.x, result.y, result.z };
+	Vector3 Quaternion::GetRotatedVector(const Vector3& vector_) const {
+		return operator*(*this, vector_);
 	}
 	
 	Vector3	Quaternion::GetVector3() const {
@@ -241,177 +239,7 @@ namespace zg {
 	
 	// ____________________________________________________________ static
 	Quaternion Quaternion::Identity{};
-	Vector3 Quaternion::ToEularDegree(const Quaternion& q_) {
-		return q_.ToEularDegree();
-	}
-	
-	Quaternion Quaternion::FromEulerAngles(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
-		Quaternion q;
-		q.SetFromEulerAngles(RADIAN_x, RADIAN_y, RADIAN_z);
-		return q;
-	}
-	
-	Quaternion Quaternion::FromEulerAngles(const Vector3& degree_) {
-		Quaternion q;
-		q.SetFromEulerAngles(degree_);
-		return q;
-	}
-	
-	Quaternion Quaternion::Slerp(const Quaternion& q1_, const Quaternion& q2_, float time_) {
-		float invert = 1.0f;
-	
-		// Compute cos(theta) using the quaternion scalar product
-		float cosineTheta = q1_.Dot(q2_);
-	
-		// Take care of the sign of cosineTheta
-		if (cosineTheta < float(0.0)) {
-			cosineTheta = -cosineTheta;
-			invert = -1.0f;
-		}
-	
-		// Because of precision, if cos(theta) is nearly 1,
-		// therefore theta is nearly 0 and we can write
-		// sin((1-t)*theta) as (1-t) and sin(t*theta) as t
-		if (1 - cosineTheta < EPSILON) 
-		{
-			return q1_ * (float(1.0f) - time_) + q2_ * (time_ * invert);
-		}
-	
-		// Compute the theta angle
-		float theta = std::acos(cosineTheta);
-	
-		// Compute sin(theta)
-		float sineTheta = std::sin(theta);
-	
-		// Compute the two coefficients that are in the spherical linear interpolation formula
-		float coeff1 = std::sin((float(1.0f) - time_)*theta) / sineTheta;
-		float coeff2 = std::sin(time_ * theta) / sineTheta * invert;
-	
-		// Compute and return the interpolated quaternion
-		return q1_ * coeff1 + q2_ * coeff2;
-	}
-	
-	Quaternion Quaternion::FromToRotation(const Vector3& fromVector, const Vector3& toVector){
-		float dot = fromVector.Dot( toVector);
-		float k = sqrt(fromVector.LengthSq() * toVector.LengthSq());
-		if (fabs(dot / k + 1) < EPSILON)
-		{
-			Vector3 ortho = zg::Orthogonal(fromVector);
-			return Quaternion(ortho.Normalized(), 0);
-		}
-		Vector3 cross = fromVector.Cross(toVector);
-		return Quaternion(cross, dot + k).Normalized();
-	}
-	
-	Quaternion Quaternion::LookRotation(const Vector3& forward, const Vector3& up, const Vector3& front){
-		UNREFERENCED_PARAMETER(front);
-		Vector3 vector = forward.Normalized();
-		Vector3 vector2 = Cross(up, vector);
-		Vector3 vector3 = Cross(vector, vector2);
-		float m00 = vector2.x;
-		float m01 = vector2.y;
-		float m02 = vector2.z;
-		float m10 = vector3.x;
-		float m11 = vector3.y;
-		float m12 = vector3.z;
-		float m20 = vector.x;
-		float m21 = vector.y;
-		float m22 = vector.z;
-	
-		float num8 = (m00 + m11) + m22;
-		Quaternion quaternion{};// = FQuat();
-		if (num8 > 0.0f)
-		{
-			float num = (float)std::sqrt(num8 + 1.0f);
-			quaternion.w = num * 0.5f;
-			num = 0.5f / num;
-			quaternion.x = (m12 - m21) * num;
-			quaternion.y = (m20 - m02) * num;
-			quaternion.z = (m01 - m10) * num;
-	
-			return quaternion;
-		}
-		if ((m00 >= m11) && (m00 >= m22))
-		{
-			float num7 = (float)std::sqrt(((1.0f + m00) - m11) - m22);
-			float num4 = 0.5f / num7;
-			quaternion.x = 0.5f * num7;
-			quaternion.y = (m01 + m10) * num4;
-			quaternion.z = (m02 + m20) * num4;
-			quaternion.w = (m12 - m21) * num4;
-	
-			return quaternion;
-		}
-		if (m11 > m22)
-		{
-			float num6 = (float)std::sqrt(((1.0f + m11) - m00) - m22);
-			float num3 = 0.5f / num6;
-			quaternion.x = (m10 + m01) * num3;
-			quaternion.y = 0.5f * num6;
-			quaternion.z = (m21 + m12) * num3;
-			quaternion.w = (m20 - m02) * num3;
-	
-			return quaternion;
-		}
-		float num5 = (float)std::sqrt(((1.0f + m22) - m00) - m11);
-		float num2 = 0.5f / num5;
-		quaternion.x = (m20 + m02) * num2;
-		quaternion.y = (m21 + m12) * num2;
-		quaternion.z = 0.5f * num5;
-		quaternion.w = (m01 - m10) * num2;
-	
-		return quaternion;
-	
-		//// Normalize inputs
-		//Vector3 forward = forward.Normalized();
-		//Vector3 upwards = up.Normalized();
-		//// Don't allow zero vectors
-		//if (forward.LengthSq() < EPSILON || upwards.LengthSq() < EPSILON)
-		//	return Quaternion::Identity();
-		//// Handle alignment with up direction
-		//if (1 - fabs( forward.Dot(upwards) ) < EPSILON)
-		//	return FromToRotation(front, forward);
-		//// Get orthogonal vectors
-		//Vector3 right = Cross(upwards, forward).Normalized();
-		//upwards = Cross(forward, right);
-		//// Calculate rotation
-		//Quaternion quaternion;
-		//float radicand = right.x + upwards.y + forward.z;
-		//if (radicand > 0)
-		//{
-		//	quaternion.w = sqrt(1.0f + radicand) * 0.5f;
-		//	float recip = 1.0f / (4.0f * quaternion.w);
-		//	quaternion.x = (upwards.z - forward.y) * recip;
-		//	quaternion.y = (forward.x - right.z) * recip;
-		//	quaternion.z = (right.y - upwards.x) * recip;
-		//}
-		//else if (right.x >= upwards.y && right.x >= forward.z)
-		//{
-		//	quaternion.x = sqrt(1.0f + right.x - upwards.y - forward.z) * 0.5f;
-		//	float recip = 1.0f / (4.0f * quaternion.x);
-		//	quaternion.w = (upwards.z - forward.y) * recip;
-		//	quaternion.z = (forward.x + right.z) * recip;
-		//	quaternion.y = (right.y + upwards.x) * recip;
-		//}
-		//else if (upwards.y > forward.z)
-		//{
-		//	quaternion.y = sqrt(1.0f - right.x + upwards.y - forward.z) * 0.5f;
-		//	float recip = 1.0f / (4.0f * quaternion.y);
-		//	quaternion.z = (upwards.z + forward.y) * recip;
-		//	quaternion.w = (forward.x - right.z) * recip;
-		//	quaternion.x = (right.y + upwards.x) * recip;
-		//}
-		//else
-		//{
-		//	quaternion.z = sqrt(1.0f - right.x - upwards.y + forward.z) * 0.5f;
-		//	float recip = 1.0f / (4.0f * quaternion.z);
-		//	quaternion.y = (upwards.z + forward.y) * recip;
-		//	quaternion.x = (forward.x + right.z) * recip;
-		//	quaternion.w = (right.y - upwards.x) * recip;
-		//}
-		//return quaternion;
-	}
-	
+
 	// ____________________________________________________________ operator
 	bool Quaternion::operator==(const Quaternion& q2_) const { return ((x == q2_.x) && (y == q2_.y) && (z == q2_.z) && (w == q2_.w)); }
 
@@ -444,7 +272,7 @@ namespace zg {
 	}
 
 	#ifdef USING_SOL2
-	Quaternion Quaternion::operator-()						const { return Quaternion{ -x, -y, -z, w }; }
+	Quaternion Quaternion::operator-()						const	{ return Quaternion{ -x, -y, -z, w }; }
 	Quaternion Quaternion::operator-(const Quaternion& q2_) const	{ return Quaternion{ x - q2_.x,	y - q2_.y,	z - q2_.z,	w - q2_.w }; }
 	Quaternion Quaternion::operator+(const Quaternion& q2_) const	{ return Quaternion{ x + q2_.x,	y + q2_.y,	z + q2_.z,	w + q2_.w }; }
 	Quaternion Quaternion::operator*(float f)			    const	{ return Quaternion{ x * f,		y * f,		z * f,		w * f	  }; }
@@ -534,6 +362,14 @@ namespace zg {
 	Quaternion operator+(const Quaternion& q1_, const Quaternion& q2_) { return Quaternion{ q1_.x + q2_.x,	q1_.y + q2_.y,	q1_.z + q2_.z,	q1_.w + q2_.w }; }
 	Vector3	operator*(const Vector3& v_, const Quaternion& q1_)		   { return operator*(q1_, v_); }
 	Vector3 operator*(const Quaternion& q1_, const Vector3& v_) {
+		//#version 1
+		//Quaternion tempVec{ vector.x, vector.y, vector.z, 0.0f };
+		//Quaternion result(*this);
+		//result *= tempVec;
+		//result *= GetConjugated();
+		//return Vector3{ result.x, result.y, result.z };
+
+		//#version 2
 		const float prodX = q1_.w * v_.x + q1_.y * v_.z - q1_.z * v_.y;
 		const float prodY = q1_.w * v_.y + q1_.z * v_.x - q1_.x * v_.z;
 		const float prodZ = q1_.w * v_.z + q1_.x * v_.y - q1_.y * v_.x;
@@ -559,7 +395,6 @@ namespace zg {
 	}
 
 	Quaternion operator/(const Quaternion& q1_, float f_) {
-		ErrorIf(f_ <= EPSILON, "Quaternion - Division by zero.");
 		float reciprocal = 1.0f / f_;
 		return Quaternion{
 			q1_.x * reciprocal,
@@ -570,18 +405,198 @@ namespace zg {
 	}
 	#endif
 	
-	Quaternion Lerp(const Quaternion& start_, const Quaternion& end_, float time_)
-	{
-	  float alpha = time_;
-	  float oneMinusAlpha = 1.0f - alpha;
-	  Quaternion quaternion(start_.x * oneMinusAlpha + end_.x * alpha,
-	                        start_.y * oneMinusAlpha + end_.y * alpha,
-	                        start_.z * oneMinusAlpha + end_.z * alpha,
-	                        start_.w * oneMinusAlpha + end_.w * alpha);
-	
-	  return quaternion.Normalized();
+	std::ostream& operator<<(std::ostream& os, const Quaternion& q_) {
+		printf("{ %.6f %.6f %.6f %.6f }\n", q_.x, q_.y, q_.z, q_.w);
+		//os << "{" << v.x << "," << v.y << "," << v.z << "," << v.w << "}\n";
+		return os;
 	}
-	
+
+	Vector3 ToEularDegree(const Quaternion& q_) {
+		return q_.ToEularDegree();
+	}
+
+	Quaternion FromEulerAngles(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
+		Quaternion q;
+		q.SetFromEulerAngles(RADIAN_x, RADIAN_y, RADIAN_z);
+		return q;
+	}
+
+	Quaternion FromEulerAngles(const Vector3& degree_) {
+		Quaternion q;
+		q.SetFromEulerAngles(degree_);
+		return q;
+	}
+
+
+
+	Quaternion FromToRotation(const Vector3& fromVector, const Vector3& toVector) {
+		float dot = fromVector.Dot(toVector);
+		float k = sqrt(fromVector.LengthSq() * toVector.LengthSq());
+		if (fabs(dot / k + 1) < EPSILON)
+		{
+			Vector3 ortho = zg::Orthogonal(fromVector);
+			return Quaternion(ortho.Normalized(), 0);
+		}
+		Vector3 cross = fromVector.Cross(toVector);
+		return Quaternion(cross, dot + k).Normalized();
+	}
+
+	Quaternion LookRotation(const Vector3& forward, const Vector3& up, const Vector3& front) {
+		UNREFERENCED_PARAMETER(front);
+		Vector3 vector = forward.Normalized();
+		Vector3 vector2 = Cross(up, vector);
+		Vector3 vector3 = Cross(vector, vector2);
+		float m00 = vector2.x;
+		float m01 = vector2.y;
+		float m02 = vector2.z;
+		float m10 = vector3.x;
+		float m11 = vector3.y;
+		float m12 = vector3.z;
+		float m20 = vector.x;
+		float m21 = vector.y;
+		float m22 = vector.z;
+
+		float num8 = (m00 + m11) + m22;
+		Quaternion quaternion{};// = FQuat();
+		if (num8 > 0.0f)
+		{
+			float num = (float)std::sqrt(num8 + 1.0f);
+			quaternion.w = num * 0.5f;
+			num = 0.5f / num;
+			quaternion.x = (m12 - m21) * num;
+			quaternion.y = (m20 - m02) * num;
+			quaternion.z = (m01 - m10) * num;
+
+			return quaternion;
+		}
+		if ((m00 >= m11) && (m00 >= m22))
+		{
+			float num7 = (float)std::sqrt(((1.0f + m00) - m11) - m22);
+			float num4 = 0.5f / num7;
+			quaternion.x = 0.5f * num7;
+			quaternion.y = (m01 + m10) * num4;
+			quaternion.z = (m02 + m20) * num4;
+			quaternion.w = (m12 - m21) * num4;
+
+			return quaternion;
+		}
+		if (m11 > m22)
+		{
+			float num6 = (float)std::sqrt(((1.0f + m11) - m00) - m22);
+			float num3 = 0.5f / num6;
+			quaternion.x = (m10 + m01) * num3;
+			quaternion.y = 0.5f * num6;
+			quaternion.z = (m21 + m12) * num3;
+			quaternion.w = (m20 - m02) * num3;
+
+			return quaternion;
+		}
+		float num5 = (float)std::sqrt(((1.0f + m22) - m00) - m11);
+		float num2 = 0.5f / num5;
+		quaternion.x = (m20 + m02) * num2;
+		quaternion.y = (m21 + m12) * num2;
+		quaternion.z = 0.5f * num5;
+		quaternion.w = (m01 - m10) * num2;
+
+		return quaternion;
+
+		//// Normalize inputs
+		//Vector3 forward = forward.Normalized();
+		//Vector3 upwards = up.Normalized();
+		//// Don't allow zero vectors
+		//if (forward.LengthSq() < EPSILON || upwards.LengthSq() < EPSILON)
+		//	return Quaternion::Identity();
+		//// Handle alignment with up direction
+		//if (1 - fabs( forward.Dot(upwards) ) < EPSILON)
+		//	return FromToRotation(front, forward);
+		//// Get orthogonal vectors
+		//Vector3 right = Cross(upwards, forward).Normalized();
+		//upwards = Cross(forward, right);
+		//// Calculate rotation
+		//Quaternion quaternion;
+		//float radicand = right.x + upwards.y + forward.z;
+		//if (radicand > 0)
+		//{
+		//	quaternion.w = sqrt(1.0f + radicand) * 0.5f;
+		//	float recip = 1.0f / (4.0f * quaternion.w);
+		//	quaternion.x = (upwards.z - forward.y) * recip;
+		//	quaternion.y = (forward.x - right.z) * recip;
+		//	quaternion.z = (right.y - upwards.x) * recip;
+		//}
+		//else if (right.x >= upwards.y && right.x >= forward.z)
+		//{
+		//	quaternion.x = sqrt(1.0f + right.x - upwards.y - forward.z) * 0.5f;
+		//	float recip = 1.0f / (4.0f * quaternion.x);
+		//	quaternion.w = (upwards.z - forward.y) * recip;
+		//	quaternion.z = (forward.x + right.z) * recip;
+		//	quaternion.y = (right.y + upwards.x) * recip;
+		//}
+		//else if (upwards.y > forward.z)
+		//{
+		//	quaternion.y = sqrt(1.0f - right.x + upwards.y - forward.z) * 0.5f;
+		//	float recip = 1.0f / (4.0f * quaternion.y);
+		//	quaternion.z = (upwards.z + forward.y) * recip;
+		//	quaternion.w = (forward.x - right.z) * recip;
+		//	quaternion.x = (right.y + upwards.x) * recip;
+		//}
+		//else
+		//{
+		//	quaternion.z = sqrt(1.0f - right.x - upwards.y + forward.z) * 0.5f;
+		//	float recip = 1.0f / (4.0f * quaternion.z);
+		//	quaternion.y = (upwards.z + forward.y) * recip;
+		//	quaternion.x = (forward.x + right.z) * recip;
+		//	quaternion.w = (right.y - upwards.x) * recip;
+		//}
+		//return quaternion;
+	}
+
+	Quaternion nLerp(const Quaternion& start_, const Quaternion& end_, float time_)
+	{
+	  //float oneMinusAlpha = 1.0f - time_;
+	  //Quaternion quaternion(start_.x * oneMinusAlpha + end_.x * alpha,
+	  //                      start_.y * oneMinusAlpha + end_.y * alpha,
+	  //                      start_.z * oneMinusAlpha + end_.z * alpha,
+	  //                      start_.w * oneMinusAlpha + end_.w * alpha);
+	  //return quaternion.Normalized();
+	  Quaternion v0 = (1.0f - time_) * start_;
+	  Quaternion v1 = time_ * end_;
+	  return (v0 + v1).Normalized();
+	}
+
+	Quaternion Slerp(const Quaternion& q1_, const Quaternion& q2_, float time_) {
+		float invert = 1.0f;
+
+		// Compute cos(theta) using the quaternion scalar product
+		float cosineTheta = q1_.Dot(q2_);
+
+		// Take care of the sign of cosineTheta
+		if (cosineTheta < float(0.0)) {
+			cosineTheta = -cosineTheta;
+			invert = -1.0f;
+		}
+
+		// Because of precision, if cos(theta) is nearly 1,
+		// therefore theta is nearly 0 and we can write
+		// sin((1-t)*theta) as (1-t) and sin(t*theta) as t
+		if (1 - cosineTheta < EPSILON)
+		{
+			return q1_ * (float(1.0f) - time_) + q2_ * (time_ * invert);
+		}
+
+		// Compute the theta angle
+		float theta = std::acos(cosineTheta);
+
+		// Compute sin(theta)
+		float sineTheta = std::sin(theta);
+
+		// Compute the two coefficients that are in the spherical linear interpolation formula
+		float coeff1 = std::sin((float(1.0f) - time_)*theta) / sineTheta;
+		float coeff2 = std::sin(time_ * theta) / sineTheta * invert;
+
+		// Compute and return the interpolated quaternion
+		return q1_ * coeff1 + q2_ * coeff2;
+	}
+
 	Quaternion ToQuaternion(const Matrix44& rot_matrix_)
 	{
 		Quaternion res;
@@ -591,12 +606,6 @@ namespace zg {
 		res.y = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * w4;
 		res.z = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * w4;
 		return res;
-	}
-	
-	std::ostream& operator<<(std::ostream& os, const Quaternion& q_) {
-		printf("{ %.6f %.6f %.6f %.6f }\n", q_.x, q_.y, q_.z, q_.w);
-		//os << "{" << v.x << "," << v.y << "," << v.z << "," << v.w << "}\n";
-		return os;
 	}
 
 } //namespace zg

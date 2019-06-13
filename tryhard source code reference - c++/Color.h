@@ -8,7 +8,7 @@ Uploaded: 18 May 2019
 #ifndef _COLOR_H
 #define _COLOR_H
 
-#include "Reals.hpp"
+#include "Reals.h"
 
 #define INV_255 0.003921568627450980392157		//	1.0 / 255.0
 #define INV_255F 0.003921568627450980392157f	//	1.0f / 255.0f

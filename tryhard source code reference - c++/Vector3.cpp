@@ -5,7 +5,7 @@
 */
 /*****************************************************************************/
 #include "stdafx.h"
-#include "Vector3.hpp"
+#include "Vector3.h"
 
 namespace zg {
 	//static
@@ -329,19 +329,22 @@ namespace zg {
 	Vector3 Lerp(const Vector3& start_, const Vector3& end_, float time_) {
 		// Imprecise method, which does not guarantee v = v1 when t = 1, due to floating-point arithmetic error.
 		// This form may be used when the hardware has a native fused multiply-add instruction.
-		//return Vector2{ 
-		//	start_.x + realtype(time_) * (end_.x - start_.x),
-		//	start_.y + realtype(time_) * (end_.y - start_.y),
-		//	start_.z + realtype(time_) * (end_.z- start_.z)
-		//};
+		//return start_ + realtype(time_) * (end_ - start_);
 
 		// Precise method, which guarantees v = v1 when t = 1.
-		realtype dttmp = realtype(1) - realtype(time_);
-		return Vector3{
-			dttmp * start_.x + realtype(time_) * end_.x,
-			dttmp * start_.y + realtype(time_) * end_.y,
-			dttmp * start_.z + realtype(time_) * end_.z
-		};
+		Vector3 v0 = (realtype(1) - realtype(time_)) * start_;
+		Vector3 v1 = realtype(time_) * end_;
+		return v0 + v1;
+	}
+	Vector3 nLerp(const Vector3& start_, const Vector3& end_, float time_) {
+		return Lerp(start_, end_, time_).Normalized();
+	}
+
+	Vector3	LerpDelta(const Vector3& start_, Vector3& deltaOf_end_start_, float time_) {
+		return start_ + realtype(time_) * deltaOf_end_start_;
+	}
+	Vector3	nLerpDelta(const Vector3& start_, Vector3& deltaOf_end_start_, float time_) {
+		return LerpDelta(start_, deltaOf_end_start_, time_).Normalized();
 	}
 
 	Vector3 LinearRand(const Vector3& v0_, const Vector3& v1_) {
@@ -389,21 +392,22 @@ namespace zg {
 	Vector3 Reject(const Vector3& a, const Vector3& b) {
 		return a - Project(a, b);
 	}
-	Vector3 Slerp(Vector3 a, Vector3 b, realtype t) {
-		realtype magA = a.Normalize();
-		realtype magB = b.Normalize();
-		realtype dot = a.Dot(b);
-		dot = fmaxf(dot, -1.0);
-		dot = fminf(dot, 1.0);
-		realtype theta = acos(dot) * t;
-		Vector3 relativeVec = (b - a * dot).Normalized();
-		Vector3 newVec = a * std::cos(theta) + relativeVec * std::sin(theta);
-		return newVec * (magA + (magB - magA) * t);
+	Vector3 Slerp(Vector3 v0_, Vector3 v1_, realtype time_) {
+		realtype magA = v0_.Normalize();
+		realtype magB = v1_.Normalize();
+		realtype dot = v0_.Dot(v1_);
+		dot = zg::Clamp(dot, -1.0f, 1.0f);
+		//dot = fmaxf(dot, -1.0);
+		//dot = fminf(dot, 1.0);
+		realtype theta = acos(dot) * time_;
+		Vector3 relativeVec = (v1_ - v0_ * dot).Normalized();
+		Vector3 newVec = v0_ * std::cos(theta) + relativeVec * std::sin(theta);
+		return newVec * (magA + (magB - magA) * time_);
 	}
-	Vector3 SlerpClamp(Vector3 a, Vector3 b, realtype t) {
-		if (t < 0) return a;
-		else if (t > 1) return b;
-		return Slerp(a, b, t);
+	Vector3 SlerpClamp(Vector3 v0_, Vector3 v1_, realtype time_) {
+		if (time_ < 0) return v0_;
+		else if (time_ > 1) return v1_;
+		return Slerp(v0_, v1_, time_);
 	}
 	void ToSpherical(const Vector3& vector, realtype &rad, realtype &theta, realtype &phi) {
 		rad = Length(vector);

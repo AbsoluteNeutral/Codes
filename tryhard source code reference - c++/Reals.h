@@ -83,6 +83,12 @@ static const double MACHINE_EPSILON_D	= std::numeric_limits<double>::epsilon();
 #define TO_RAD(a) ((a) * (PI180))
 #define TO_DEG(a) ((a) * (INV_PI180))
 
+enum ZG_API ASPECT_RATIO {
+	CAM_4_3 = 0,
+	CAM_16_10,
+	CAM_16_9
+};
+
 enum ZG_API RESOLUTION_SIZE {
 	//4::3
 	R_640x480 = 0,
