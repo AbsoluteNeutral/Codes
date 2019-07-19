@@ -48,7 +48,7 @@ namespace zg {
 		x = x_; y = y_; z = z_;
 	}
 	void Vector3::SetZero() { x = y = z = 0.0f; }
-	
+	void Vector3::Reset()	{ x = y = z = 0.0f; }
 	//getters
 	Vector3 Vector3::Cross(const Vector3& rhs) const {
 		return Vector3{
@@ -90,6 +90,10 @@ namespace zg {
 	}
 	realtype Vector3::LengthSq()			  const { return x * x + y * y + z * z; }
 	realtype Vector3::Length()				  const { return sqrtf(LengthSq()); }
+	bool Vector3::IsNan() const
+	{
+		return (x != x) || (y != y) || (z != z);
+	}
 	bool Vector3::IsUnit() const {
 		return ApproxEqual(LengthSq(), 1.0f);
 	}
@@ -105,6 +109,7 @@ namespace zg {
 	
 	Vector3& Vector3::operator= (const Vector2& v)		{ x = v.x;  y = v.y;				return *this; }
 	Vector3& Vector3::operator= (const Vector4& v)		{ x = v.x;  y = v.y;	z = v.z;	return *this; }
+	Vector3& Vector3::operator+=(const Vector2& v)		{ x += v.x; y += v.y;				return *this; }
 	Vector3& Vector3::operator+=(const Vector3& v)		{ x += v.x; y += v.y;	z += v.z;	return *this; }
 	Vector3& Vector3::operator-=(const Vector3& v)		{ x -= v.x; y -= v.y;	z -= v.z;	return *this; }
 	Vector3& Vector3::operator*=(realtype f)				{ x *= f;	y *= f;		z *= f;		return *this; }
@@ -286,21 +291,22 @@ namespace zg {
 			from_.x * to_.y - from_.y * to_.x };
 	}
 
-	float DistanceSq(const Vector3& v0_, const Vector3& v1_) {
+	realtype Distance(const Vector3& v0_, const Vector3& v1_) {
+		return std::sqrtf(DistanceSq(v0_, v1_));
+	}
+	realtype DistanceSq(const Vector3& v0_, const Vector3& v1_) {
 		return 
 			(v0_.x - v1_.x) * (v0_.x - v1_.x) +
 			(v0_.y - v1_.y) * (v0_.y - v1_.y) +
 			(v0_.z - v1_.z) * (v0_.z - v1_.z);
 	}
-
-	float DistanceSq(const Vector2& v0_, const Vector3& v1_) {
+	realtype DistanceSq(const Vector2& v0_, const Vector3& v1_) {
 		return 
 			(v0_.x - v1_.x) * (v0_.x - v1_.x) +
 			(v0_.y - v1_.y) * (v0_.y - v1_.y) +
 			(v1_.z * v1_.z);
 	}
-
-	float DistanceSq(const Vector3& v0_, const Vector2& v1_) {
+	realtype DistanceSq(const Vector3& v0_, const Vector2& v1_) {
 		return 
 			(v0_.x - v1_.x) * (v0_.x - v1_.x) +
 			(v0_.y - v1_.y) * (v0_.y - v1_.y) +

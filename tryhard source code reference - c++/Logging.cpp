@@ -82,8 +82,8 @@ void PrintColor(bool Expression_, const char* functionname, const char* format, 
 	if (firstError == true)
 	{
 		// Bring the console window to the front
-		HWND hwnd = GetConsoleWindow();
-		SetForegroundWindow(hwnd);
+		//HWND hwnd = GetConsoleWindow();
+		//SetForegroundWindow(hwnd);
 	
 		// We won't popup the console anymore (popups with every error gets annoying!)
 		firstError = false;
@@ -110,8 +110,8 @@ void PrintError(const char* format, ...)
 	if (firstError == true)
 	{
 		// Bring the console window to the front
-		HWND hwnd = GetConsoleWindow();
-		SetForegroundWindow(hwnd);
+		//HWND hwnd = GetConsoleWindow();
+		//SetForegroundWindow(hwnd);
 
 		// We won't popup the console anymore (popups with every error gets annoying!)
 		firstError = false;
@@ -132,8 +132,8 @@ void JustPrint(const char* format, ...)
 	if (firstError == true)
 	{
 		// Bring the console window to the front
-		HWND hwnd = GetConsoleWindow();
-		SetForegroundWindow(hwnd);
+		//HWND hwnd = GetConsoleWindow();
+		//SetForegroundWindow(hwnd);
 
 		// We won't popup the console anymore (popups with every error gets annoying!)
 		firstError = false;

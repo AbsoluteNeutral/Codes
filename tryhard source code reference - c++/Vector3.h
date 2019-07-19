@@ -32,7 +32,7 @@ namespace zg {
 		realtype	Normalize	();
 		void		Set			(realtype x_, realtype y_, realtype z_);
 		void		SetZero		();
-	
+		void		Reset();
 		//getters
 		Vector3		Cross					(const Vector3& v)  const;
 		realtype	Dot						(const Vector3& v)	const;
@@ -43,9 +43,10 @@ namespace zg {
 		Vector3		GetUnitOrthogonalVector	()					const;
 		realtype	LengthSq				()					const;
 		realtype	Length					()					const;
+		bool		IsNan					()					const;
 		bool		IsUnit					()					const;
 		bool		IsZero					()					const;
-	
+		
 		//static	
 		static const Vector3 Zero;
 		static const Vector3 One;
@@ -58,6 +59,7 @@ namespace zg {
 		realtype operator[]	(int index) const;
 		Vector3& operator=	(const Vector2& v);
 		Vector3& operator=	(const Vector4& v);
+		Vector3& operator+=	(const Vector2& v);
 		Vector3& operator+=	(const Vector3& v);
 		Vector3& operator-=	(const Vector3& v);
 		Vector3& operator*=	(realtype f);
@@ -103,9 +105,10 @@ namespace zg {
 	ZG_API void			CopyVector3Array	(Vector3* dest_, const Vector3* source_, size_t sz_);
 	ZG_API void			CopyVector3Array	(std::vector<Vector3>& dest_, const Vector3* source_, size_t sz_);
 	ZG_API Vector3		Cross				(const Vector3& from_, const Vector3& to_);
-	ZG_API realtype		DistanceSq			(const Vector3& v0_, const Vector3& v1_);	//distance of Vector 3 and Vector 3
-	ZG_API realtype		DistanceSq			(const Vector2& v0_, const Vector3& v1_);	//distance of Vector 2 and Vector 3
-	ZG_API realtype		DistanceSq			(const Vector3& v0_, const Vector2& v1_);	//distance of Vector 3 and Vector 2
+	ZG_API realtype		Distance			(const Vector3& v0_, const Vector3& v1_);	//distance of Vector 3 and Vector 3
+	ZG_API realtype		DistanceSq			(const Vector3& v0_, const Vector3& v1_);	//distanceSq of Vector 3 and Vector 3
+	ZG_API realtype		DistanceSq			(const Vector2& v0_, const Vector3& v1_);	//distanceSq of Vector 2 and Vector 3
+	ZG_API realtype		DistanceSq			(const Vector3& v0_, const Vector2& v1_);	//distanceSq of Vector 3 and Vector 2
 	ZG_API realtype		Dot					(const Vector3& v0_, const Vector3& v1_);
 	ZG_API Vector3		FromSpherical		(realtype r, realtype theta, realtype phi);
 	ZG_API bool			IsParallel			(const Vector3& v0_, const Vector3& v1_);	// Return true if two vectors are parallel

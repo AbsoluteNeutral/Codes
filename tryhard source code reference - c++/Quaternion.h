@@ -33,6 +33,7 @@ namespace zg {
 		void	Set					(float x_, float y_, float z_, float w_);
 		void	SetFromEulerAngles	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
 		void	SetFromEulerAngles	(const Vector3& degree_);
+		void	Reset				();
 
 		// ____________________________________________________________ getters 
 		float		Dot					(const Quaternion& rhs) const;
@@ -49,6 +50,8 @@ namespace zg {
 		float		LengthSq			()						const;
 		float		Length				()						const;
 		Vector3		ToEularDegree		()						const;
+		bool		IsNan				()						const;
+		
 
 		// ____________________________________________________________ static
 		static Quaternion Identity;
@@ -87,7 +90,7 @@ namespace zg {
 	private:
 		
 	};
-	
+	ZG_API float		Dot				(const Quaternion& q0_, const Quaternion& q1_);
 	ZG_API Vector3		ToEularDegree	(const Quaternion& q_);
 	ZG_API Quaternion	FromEulerAngles	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
 	ZG_API Quaternion	FromEulerAngles	(const Vector3& DEGREE_);

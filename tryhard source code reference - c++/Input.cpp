@@ -71,37 +71,81 @@ void Input::UpdateScreenSize(int width_, int height_) {
 void Input::SystemUpdate(){
 	if (keyBoardFlicker)
 	{
+#ifdef _64BITMACHINE
+		for (int i = 0; i < 256; i += 8)
+		{
+			keyBoardSwitch_1[i]		= GetAsyncKeyState(i	) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 1] = GetAsyncKeyState(i + 1) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 2] = GetAsyncKeyState(i + 2) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 3] = GetAsyncKeyState(i + 3) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 4] = GetAsyncKeyState(i + 4) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 5] = GetAsyncKeyState(i + 5) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 6] = GetAsyncKeyState(i + 6) ? 0xF0 : 0x0;
+			keyBoardSwitch_1[i + 7] = GetAsyncKeyState(i + 7) ? 0xF0 : 0x0;
+		}
+#else
+		//BYTE* b = keyBoardSwitch_1;
+		//BYTE* e = keyBoardSwitch_1 + 256;
+		//while (b != e)
+		//{
+		//	*b = GetAsyncKeyState(b - keyBoardSwitch_1) ? 0xF0 : 0x0;
+		//	++b;
+		//}
+
+		//Unroll x4
 		BYTE* b = keyBoardSwitch_1;
 		BYTE* e = keyBoardSwitch_1 + 256;
-		while (b != e) {
-			*b = GetAsyncKeyState(b - keyBoardSwitch_1) ? 0xF0 : 0x0;
-			++b;
+		while (b != e)
+		{
+			int diff = b - keyBoardSwitch_1;
+			*b		 = GetAsyncKeyState(diff) ? 0xF0 : 0x0;
+			*(b + 1) = GetAsyncKeyState(diff + 1) ? 0xF0 : 0x0;
+			*(b + 2) = GetAsyncKeyState(diff + 2) ? 0xF0 : 0x0;
+			*(b + 3) = GetAsyncKeyState(diff + 3) ? 0xF0 : 0x0;
+			b += 4;
 		}
-		//for (int i = 0; i < 256; ++i) {
-		//	keyBoardSwitch_1[i] = 0x0;
-		//	if (GetAsyncKeyState(i)) {
-		//		keyBoardSwitch_1[i] = 0xF0;
-		//	}
-		//}
+#endif
 		//GetKeyboardState(keyBoardSwitch_1);		//get curent state to keyboard1
 		prevKeyboardState = keyBoardSwitch_0;	//set prev to 0
 		currKeyboardState = keyBoardSwitch_1;	//set curr to 1
 	}
 	else
 	{
+#ifdef _64BITMACHINE
+		for (int i = 0; i < 256; i += 8)
+		{
+			keyBoardSwitch_0[i]		= GetAsyncKeyState(i) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 1] = GetAsyncKeyState(i + 1) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 2] = GetAsyncKeyState(i + 2) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 3] = GetAsyncKeyState(i + 3) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 4] = GetAsyncKeyState(i + 4) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 5] = GetAsyncKeyState(i + 5) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 6] = GetAsyncKeyState(i + 6) ? 0xF0 : 0x0;
+			keyBoardSwitch_0[i + 7] = GetAsyncKeyState(i + 7) ? 0xF0 : 0x0;
+		}
+#else
+		//BYTE* b = keyBoardSwitch_0;
+		//BYTE* e = keyBoardSwitch_0 + 256;
+		//while (b != e)
+		//{
+		//	*b = GetAsyncKeyState(b - keyBoardSwitch_0) ? 0xF0 : 0x0;
+		//	++b;
+		//}
+
+		//Unroll x4
 		BYTE* b = keyBoardSwitch_0;
 		BYTE* e = keyBoardSwitch_0 + 256;
-		while (b != e) {
-			*b = GetAsyncKeyState(b - keyBoardSwitch_0) ? 0xF0 : 0x0;
-			++b;
+		while (b != e)
+		{
+			int diff = b - keyBoardSwitch_0;
+			*b		 = GetAsyncKeyState(diff) ? 0xF0 : 0x0;
+			*(b + 1) = GetAsyncKeyState(diff + 1) ? 0xF0 : 0x0;
+			*(b + 2) = GetAsyncKeyState(diff + 2) ? 0xF0 : 0x0;
+			*(b + 3) = GetAsyncKeyState(diff + 3) ? 0xF0 : 0x0;
+			b += 4;
 		}
-		//for (int i = 0; i < 256; ++i) {
-		//	keyBoardSwitch_0[i] = 0x0;
-		//	if (GetAsyncKeyState(i)) {
-		//		keyBoardSwitch_0[i] = 0xF0;
-		//	}
-		//}
-		//GetKeyboardState(keyBoardSwitch_0);		//get curent state to keyboard0
+#endif
+		//GetKeyboardState(keyBoardSwitch_0);	//get curent state to keyboard0
 		prevKeyboardState = keyBoardSwitch_1;	//set prev to 1
 		currKeyboardState = keyBoardSwitch_0;	//set curr to 0
 	}
@@ -113,14 +157,16 @@ void Input::SystemUpdate(){
 	if (GetCursorPos(&currMouseScreenPos))
 		ScreenToClient(winHWND, &currMouseScreenPos);
 
-	if (lockMouse) {
+	if (lockMouse) 
+	{
 		deltaMouse.x = (halfscreen.x - currMouseScreenPos.x );
 		deltaMouse.y = (halfscreen.y - currMouseScreenPos.y );
 		POINT tmp = halfscreen;
 		ClientToScreen(Engine::sys_WinDisplay.GetHWND(), &tmp);
 		SetCursorPos(tmp.x, tmp.y);
 	}
-	else {
+	else 
+	{
 		deltaMouse.x = (prevMouseScreenPos.x - currMouseScreenPos.x);
 		deltaMouse.y = (prevMouseScreenPos.y - currMouseScreenPos.y);
 	}

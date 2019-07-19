@@ -320,15 +320,15 @@ namespace zg {
 			Dot(row3, col0), Dot(row3, col1), Dot(row3, col2), Dot(row3, col3)
 		};
 	}
-	Vector2 operator*(const Matrix44& pMtx, const Vector2 &rhs) {
-		Vector4 tmp{ rhs.x, rhs.y, 0.0f, 1.0f };
+	Vector2 operator*(const Matrix44& pMtx, const Vector2 &pt_) {
+		Vector4 tmp{ pt_.x, pt_.y, 0.0f, 1.0f };
 		return Vector2{
 			Dot(pMtx.GetRow(0), tmp),
 			Dot(pMtx.GetRow(1), tmp)
 		};	
 	}		
-	Vector3 operator*(const Matrix44& pMtx, const Vector3 &rhs) {
-		Vector4 tmp{ rhs.x, rhs.y, rhs.z, 1.0f };
+	Vector3 operator*(const Matrix44& pMtx, const Vector3 &pt_) {
+		Vector4 tmp{ pt_.x, pt_.y, pt_.z, 1.0f };
 		return Vector3{
 			Dot(pMtx.GetRow(0), tmp),
 			Dot(pMtx.GetRow(1), tmp),
@@ -756,8 +756,8 @@ namespace zg {
 
 		return ToQuaternion(matrix);
 	}
-	Vector3	TransformPoint(const Matrix44& matrix_, const Vector3& vector_) {
-		return Vector3{ matrix_ * Vector4{ vector_, 1.0f } };
+	Vector3	TransformPoint(const Matrix44& matrix_, const Vector3& point_) {
+		return Vector3{ matrix_ * Vector4{ point_, 1.0f } };
 	}
 	Vector3	TransformVector(const Matrix44& matrix_, const Vector3& vector_) {
 		return Vector3{ matrix_ * Vector4{ vector_, 0.0f } };

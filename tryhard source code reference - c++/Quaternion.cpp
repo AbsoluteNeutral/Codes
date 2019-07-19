@@ -105,6 +105,10 @@ namespace zg {
 		SetFromEulerAngles(TO_RAD(x_), TO_RAD(y_), TO_RAD(z_));
 	}
 	
+	void Quaternion::Reset() {
+		x = y = z = 0.0f;
+		w = 1.0f;
+	}
 	// ____________________________________________________________ getters 
 	float Quaternion::Dot(const Quaternion& q_) const {
 		return x * q_.x + y * q_.y + z * q_.z + w * q_.w;
@@ -231,12 +235,16 @@ namespace zg {
 		float z_ = TO_DEG(atan2(2.0f * (x * y + z * w), (sqx - sqy - sqz + sqw)));  //z
 		float x_ = TO_DEG(atan2(2.0f * (y * z + x * w), (-sqx - sqy + sqz + sqw))); //x
 		float y_ = TO_DEG(asin(-2.0f * (x * z - y * w)));						   //y
-		z_ = (z_ > -EPSILON && z_ < EPSILON) ? 0.0f : z_;
-		x_ = (x_ > -EPSILON && x_ < EPSILON) ? 0.0f : x_;
-		y_ = (y_ > -EPSILON && y_ < EPSILON) ? 0.0f : y_;
+		//z_ = (z_ > -EPSILON && z_ < EPSILON) ? 0.0f : z_;
+		//x_ = (x_ > -EPSILON && x_ < EPSILON) ? 0.0f : x_;
+		//y_ = (y_ > -EPSILON && y_ < EPSILON) ? 0.0f : y_;
 		return Vector3{ x_, y_, z_ };
 	}
 	
+	bool Quaternion::IsNan() const
+	{
+		return (x != x) || (y != y) || (z != z) || (w != w);
+	}
 	// ____________________________________________________________ static
 	Quaternion Quaternion::Identity{};
 
@@ -410,7 +418,9 @@ namespace zg {
 		//os << "{" << v.x << "," << v.y << "," << v.z << "," << v.w << "}\n";
 		return os;
 	}
-
+	float Dot(const Quaternion& q0_, const Quaternion& q1_) {
+		return q0_.Dot(q1_);
+	}
 	Vector3 ToEularDegree(const Quaternion& q_) {
 		return q_.ToEularDegree();
 	}
@@ -553,14 +563,13 @@ namespace zg {
 	Quaternion nLerp(const Quaternion& start_, const Quaternion& end_, float time_)
 	{
 	  //float oneMinusAlpha = 1.0f - time_;
-	  //Quaternion quaternion(start_.x * oneMinusAlpha + end_.x * alpha,
-	  //                      start_.y * oneMinusAlpha + end_.y * alpha,
-	  //                      start_.z * oneMinusAlpha + end_.z * alpha,
-	  //                      start_.w * oneMinusAlpha + end_.w * alpha);
+	  //Quaternion quaternion(start_ * oneMinusAlpha + end_ * time_);
 	  //return quaternion.Normalized();
-	  Quaternion v0 = (1.0f - time_) * start_;
-	  Quaternion v1 = time_ * end_;
-	  return (v0 + v1).Normalized();
+		time_ = Dot(start_, end_) > 0 ? time_ : -time_;
+
+		Quaternion v0 = (1.0f - time_) * start_;
+		Quaternion v1 = time_ * end_;
+		return (v0 + v1).Normalized();
 	}
 
 	Quaternion Slerp(const Quaternion& q1_, const Quaternion& q2_, float time_) {

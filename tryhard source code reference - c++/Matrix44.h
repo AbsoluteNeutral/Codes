@@ -76,8 +76,8 @@ namespace zg {
 		ZG_API friend Matrix44	operator-	(const Matrix44& lhs, const Matrix44& rhs);
 		ZG_API friend Matrix44	operator+	(const Matrix44& lhs, const Matrix44& rhs);
 		ZG_API friend Matrix44	operator*	(const Matrix44& lhs, const Matrix44& rhs);
-		ZG_API friend Vector2	operator*	(const Matrix44& lhs, const Vector2& v_);
-		ZG_API friend Vector3	operator*	(const Matrix44& lhs, const Vector3& v_);
+		ZG_API friend Vector2	operator*	(const Matrix44& lhs, const Vector2& pt_);
+		ZG_API friend Vector3	operator*	(const Matrix44& lhs, const Vector3& pt_);
 		ZG_API friend Vector4	operator*	(const Matrix44& lhs, const Vector4& v_);
 	#endif
 		ZG_API friend std::ostream& operator<<(std::ostream& os, const Matrix44& matrix_);
@@ -114,7 +114,7 @@ namespace zg {
 	ZG_API Vector3		GetPosition			(const Matrix44& matrix_);
 	ZG_API Vector3		GetScale			(const Matrix44& matrix_);
 	ZG_API Quaternion	GetRotation			(const Matrix44& matrix_);
-	ZG_API Vector3		TransformPoint		(const Matrix44& matrix_, const Vector3& vector_);
+	ZG_API Vector3		TransformPoint		(const Matrix44& matrix_, const Vector3& point_);
 	ZG_API Vector3		TransformVector		(const Matrix44& matrix_, const Vector3& vector_);
 	
 	//ZG_API Matrix44		Inverse				(const Matrix44& mat);
