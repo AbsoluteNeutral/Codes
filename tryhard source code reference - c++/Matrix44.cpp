@@ -533,6 +533,16 @@ namespace zg {
 	}
 #pragma endregion
 
+	Matrix44 BuildSkew4x4(const Vector3& v_)
+	{
+		return Matrix44{
+			 0.0f,	-v_.z,	v_.y, 0.0f,
+			 v_.z,	 0.0f, -v_.x, 0.0f,
+			-v_.y,   v_.x,	0.0f, 0.0f,
+			 0.0f,	 0.0f,	0.0f, 1.0f
+		};
+	}
+
 	//ETC
 	Matrix44 LookAtRH(const Vector3& eye, const Vector3& target, const Vector3& up) {
 		//eye = position

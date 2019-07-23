@@ -21,6 +21,7 @@ namespace zg {
 	
 		//____________________________________________________________ constructor
 		Quaternion					() noexcept;
+		Quaternion					(const Vector3& topurequaternion_) noexcept;
 		Quaternion					(float x_, float y_, float z_, float w_) noexcept;
 		Quaternion					(const Vector3& axis_, float degree_) noexcept;
 	
@@ -51,6 +52,7 @@ namespace zg {
 		float		Length				()						const;
 		Vector3		ToEularDegree		()						const;
 		bool		IsNan				()						const;
+		bool		IsNearNan			()						const;
 		
 
 		// ____________________________________________________________ static
@@ -92,13 +94,13 @@ namespace zg {
 	};
 	ZG_API float		Dot				(const Quaternion& q0_, const Quaternion& q1_);
 	ZG_API Vector3		ToEularDegree	(const Quaternion& q_);
-	ZG_API Quaternion	FromEulerAngles	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
-	ZG_API Quaternion	FromEulerAngles	(const Vector3& DEGREE_);
 	ZG_API Quaternion	FromToRotation	(const Vector3& fromVector, const Vector3& toVector);
 	ZG_API Quaternion	LookRotation	(const Vector3& forward, const Vector3& upwards, const Vector3& front);
 	ZG_API Quaternion	nLerp			(const Quaternion& start_, const Quaternion& end_, float time_);
 	ZG_API Quaternion	Slerp			(const Quaternion& q1_, const Quaternion& q2_, float time_);
 	ZG_API Quaternion	ToQuaternion	(const Matrix44& rot_matrix_);
+	ZG_API Quaternion	ToQuaternion	(float RADIAN_x, float RADIAN_y, float RADIAN_z);
+	ZG_API Quaternion	ToQuaternion	(const Vector3& DEGREE_);
 
 } //namespace zg
 

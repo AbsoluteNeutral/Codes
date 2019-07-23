@@ -98,6 +98,7 @@ namespace zg {
 	ZG_API void			BuildTRS			(Matrix44& m, const Vector3& translation_, const Vector3& scale_, const Vector3& axis_, float angle_);
 	ZG_API Matrix44		BuildTRS4x4			(const Vector3& translation_, const Quaternion& quaternion_, const Vector3& scale_);
 	
+	ZG_API Matrix44		BuildSkew4x4		(const Vector3& v_);
 	//ETC
 	ZG_API Matrix44		LookAtRH			(const Vector3& eye, const Vector3& target, const Vector3& up);
 	ZG_API Matrix44		LookAtRHDir			(const Vector3& eye, const Vector3& direction, const Vector3& up);

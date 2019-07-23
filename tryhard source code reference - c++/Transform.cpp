@@ -227,11 +227,11 @@ void Transform::Translate(const zg::Vector3& translate_) {
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(float x_, float y_, float z_) {
-	rotation *= zg::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
+	rotation *= zg::ToQuaternion(zg::Vector3{ x_, y_, z_ });
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(const zg::Vector3& eular_) {
-	rotation *= zg::FromEulerAngles(eular_);
+	rotation *= zg::ToQuaternion(eular_);
 	flags |= T_DIRTY;
 }
 void Transform::Rotate(const zg::Quaternion& rotation_) {
@@ -275,11 +275,11 @@ void Transform::LocalTranslate(const zg::Vector3& translate_) {
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(float x_, float y_, float z_) {
-	localRotation *= zg::FromEulerAngles(zg::Vector3{ x_, y_, z_ });
+	localRotation *= zg::ToQuaternion(zg::Vector3{ x_, y_, z_ });
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(const zg::Vector3& eular__) {
-	localRotation *= zg::FromEulerAngles(eular__);
+	localRotation *= zg::ToQuaternion(eular__);
 	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 void Transform::LocalRotate(const zg::Quaternion& rotation_) {
@@ -349,7 +349,7 @@ bool				Transform::IsBone			() const { return (flags & T_ISBONE); }
 bool				Transform::IsStatic			() const { return (flags & T_STATIC); }
 zg::Vector3			Transform::Forward			() const { return rotation.GetRotatedVector(facing); }
 zg::Vector3			Transform::Up				() const { return rotation.GetRotatedVector(zg::Vector3::Vector3Y); }
-zg::Vector3			Transform::Right			() const { return rotation.GetRotatedVector(zg::Vector3::Vector3X); }
+zg::Vector3			Transform::Right			() const { return Forward().Cross(zg::Vector3::Vector3Y); } //rotation.GetRotatedVector(zg::Vector3::Vector3X); }
 
 // ______________________________________________________________________ etc function
 void Transform::Attach(Transform* parent_) {
@@ -378,7 +378,8 @@ void Transform::Attach(Transform* parent_) {
 	zg::Vector3 rec = (1.0f / parent->scale);
 	zg::Quaternion con = parent->rotation.GetConjugated();
 
-	localPosition = (con * (rec * position)) + (con * (rec * -parent->position)) ; //zg::GaussJordanInverse(parent->GetMatrix()) * position;
+	//localPosition = (con * (rec * position)) + (con * (rec * -parent->position)) ; //zg::GaussJordanInverse(parent->GetMatrix()) * position;
+	localPosition = zg::GaussJordanInverse(parent->GetMatrix()) * position;
 	localScale		= rec * scale;
 	localRotation	= con * rotation;
 
@@ -413,7 +414,11 @@ void Transform::Detach() {
 
 void Transform::CameraLookAt(const Transform& target_)
 {
-	rotation = zg::LookRotation(position - target_.position, Up(), facing);
+	CameraLookAt(target_.position);
+}
+void Transform::CameraLookAt(const zg::Vector3& target_position_)
+{
+	rotation = zg::LookRotation(position - target_position_, Up(), facing);
 	if (parent) {
 		localRotation = rotation;
 	}
@@ -422,14 +427,36 @@ void Transform::CameraLookAt(const Transform& target_)
 void Transform::LookAt(const Transform& target_) {
 	LookAt(target_.position);
 }
-void Transform::LookAt(const zg::Vector3& target_) {
+void Transform::LookAt(const zg::Vector3& target_) 
+{
 	rotation = zg::LookRotation(target_ - position, zg::Vector3::Vector3Y, facing);
-	if (parent) {
+	if (parent) 
+	{
+		//zg::Quaternion con = parent->rotation.GetConjugated();
+		//localRotation = con * rotation;
+
 		localRotation = rotation;
 	}
 	flags |= T_DIRTY;
 }
+void Transform::LookAt(const zg::Vector3& target_, const zg::Vector3& facing_, const zg::Vector3& up_)
+{
+	zg::Quaternion getRot = zg::LookRotation(target_ - position, up_, facing_);
+	if (parent)
+	{
+		//Detach();
+		//rotation = getRot;
+		//Attach(parent);
 
+		//zg::Quaternion con = parent->rotation.GetConjugated();
+		//localRotation = con * rotation;
+		localRotation = rotation;
+	}
+	else
+		rotation = getRot;
+
+	flags |= T_DIRTY;
+}
 void Transform::Reset() {
 	if (parent) 
 	{
@@ -447,11 +474,26 @@ void Transform::Reset() {
 		flags |= T_DIRTY;
 	}
 }
+void Transform::ResetFlag() 
+{
+	flags &= ~T_YET_TOUPDATE;
+	
+	if (parent) 
+	{
+		zg::Vector3 rec = (1.0f / parent->scale);
+		zg::Quaternion con = parent->rotation.GetConjugated();
 
+		localPosition	= zg::GaussJordanInverse(parent->GetMatrix()) * position;
+		//localPosition	= (con * (rec * position)) + (con * (rec * -parent->position)); //zg::GaussJordanInverse(parent->GetMatrix()) * position;
+		localScale		= rec * scale;
+		localRotation	= con * rotation;
+
+		SignalChildDirtyBit();
+	}
+}
 void Transform::SetUpdateFlag()
 {
-	flags |= T_DIRTY;
-	flags |= T_YET_TOUPDATE;
+	flags |= T_DIRTY | T_YET_TOUPDATE;
 }
 
 void Transform::RotateTowards(const Transform& target, float rate)
@@ -527,6 +569,9 @@ void Transform::Slerp(const zg::Quaternion& q, float deltatime_) {
 
 void Transform::ForceUpdate()
 {
+	if (!parent)
+		return;
+
 	//if parent have yet to update, update upwards
 	if ((parent->flags & T_YET_TOUPDATE))
 		parent->Update();
@@ -669,7 +714,7 @@ void Transform::Unserial(FXMLElement* pElem){
 	getEuler.x = pSubElem->FloatAttribute("x");
 	getEuler.y = pSubElem->FloatAttribute("y");
 	getEuler.z = pSubElem->FloatAttribute("z");
-	rotation = zg::FromEulerAngles(getEuler);
+	rotation = zg::ToQuaternion(getEuler);
 
 	pSubElem = pSubElem->NextSiblingElement();
 

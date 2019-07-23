@@ -13,6 +13,9 @@ namespace zg {
 	Quaternion::Quaternion() noexcept
 		:x(0.0f), y(0.0f), z(0.0f), w(1.0f)
 	{}
+	Quaternion::Quaternion(const Vector3& topurequaternion_) noexcept
+		:x(topurequaternion_.x), y(topurequaternion_.y), z(topurequaternion_.z), w(0.0f)
+	{}
 	Quaternion::Quaternion(float x_, float y_, float z_, float w_) noexcept
 		: x(x_), y(y_), z(z_), w(w_)
 	{}
@@ -91,11 +94,11 @@ namespace zg {
 		y = c.x * sinYcosZ + s.x * cosYsinZ;
 		z = c.x * cosYsinZ - s.x * sinYcosZ;
 		w = c.x * cosYcosZ + s.x * sinYsinZ;
-	
-		x = (x > -EPSILON && x < EPSILON) ? 0.0f : x;
-		y = (y > -EPSILON && y < EPSILON) ? 0.0f : y;
-		z = (z > -EPSILON && z < EPSILON) ? 0.0f : z;
-		w = (w > -EPSILON && w < EPSILON) ? 0.0f : w;
+
+		x = NEARZERO(x) ? 0.0f : x;
+		y = NEARZERO(y) ? 0.0f : y;
+		z = NEARZERO(z) ? 0.0f : z;
+		//w = NEARZERO(w) ? 1.0f : w;
 	}
 	
 	void Quaternion::SetFromEulerAngles(const Vector3& degree_) {
@@ -245,6 +248,10 @@ namespace zg {
 	{
 		return (x != x) || (y != y) || (z != z) || (w != w);
 	}
+	bool Quaternion::IsNearNan() const
+	{
+		return (NEARZERO(x) && NEARZERO(y) && NEARZERO(z) && NEARZERO(w));
+	}
 	// ____________________________________________________________ static
 	Quaternion Quaternion::Identity{};
 
@@ -267,6 +274,11 @@ namespace zg {
 		x = lhs.w * q2_.x + lhs.x * q2_.w + lhs.y * q2_.z - lhs.z * q2_.y;
 		y = lhs.w * q2_.y - lhs.x * q2_.z + lhs.y * q2_.w + lhs.z * q2_.x;
 		z = lhs.w * q2_.z + lhs.x * q2_.y - lhs.y * q2_.x + lhs.z * q2_.w;
+
+		//if (NEARZERO(x) && NEARZERO(y) && NEARZERO(z) && NEARZERO(w))
+		//{
+		//	*this = lhs.GetConjugated();
+		//}
 		return *this;
 	}
 	Quaternion& Quaternion::operator/=(float f_) {
@@ -338,8 +350,8 @@ namespace zg {
 			"GetAxis", &Quaternion::GetAxis,
 	
 			"EulerToQ", sol::overload(
-				static_cast<void (Quaternion::*)(float, float, float)>(&Quaternion::FromEulerAngles),
-				static_cast<void (Quaternion::*)(const Vector3&)>(&Quaternion::FromEulerAngles)),
+				static_cast<void (Quaternion::*)(float, float, float)>(&Quaternion::ToQuaternion),
+				static_cast<void (Quaternion::*)(const Vector3&)>(&Quaternion::ToQuaternion)),
 	
 			"Degree", &Quaternion::Degree,
 			"GetRotatedVector", &Quaternion::GetRotatedVector,
@@ -425,13 +437,13 @@ namespace zg {
 		return q_.ToEularDegree();
 	}
 
-	Quaternion FromEulerAngles(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
+	Quaternion ToQuaternion(float RADIAN_x, float RADIAN_y, float RADIAN_z) {
 		Quaternion q;
 		q.SetFromEulerAngles(RADIAN_x, RADIAN_y, RADIAN_z);
 		return q;
 	}
 
-	Quaternion FromEulerAngles(const Vector3& degree_) {
+	Quaternion ToQuaternion(const Vector3& degree_) {
 		Quaternion q;
 		q.SetFromEulerAngles(degree_);
 		return q;
@@ -608,13 +620,58 @@ namespace zg {
 
 	Quaternion ToQuaternion(const Matrix44& rot_matrix_)
 	{
-		Quaternion res;
-		res.w = sqrt(1.0f + rot_matrix_.md[0][0] + rot_matrix_.md[1][1] + rot_matrix_.md[2][2]) * 0.5f;
-		float w4 = 1.0f / (4.0f * res.w);
-		res.x = (rot_matrix_.md[2][1] - rot_matrix_.md[1][2]) * w4;
-		res.y = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * w4;
-		res.z = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * w4;
-		return res;
+		Quaternion q;
+		//q.w = sqrt(1.0f + rot_matrix_.md[0][0] + rot_matrix_.md[1][1] + rot_matrix_.md[2][2]) * 0.5f;
+		//float w4 = 1.0f / (4.0f * q.w);
+		//q.x = (rot_matrix_.md[2][1] - rot_matrix_.md[1][2]) * w4;
+		//q.y = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * w4;
+		//q.z = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * w4;
+
+		float tr = rot_matrix_.md[0][0] + rot_matrix_.md[1][1] + rot_matrix_.md[2][2];
+		float s = 0.0f;
+		if (tr >= 0)
+		{
+			s = sqrtf(tr + 1.0f);
+			q.w = s * 0.5f;
+			q.x = (rot_matrix_.md[2][1] - rot_matrix_.md[1][2]) * q.w;
+			q.y = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * q.w;
+			q.z = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * q.w;
+		}
+		else
+		{
+			int i = 0;
+			if (rot_matrix_.md[1][1] > rot_matrix_.md[0][0]) i = 1;
+			if (rot_matrix_.md[2][2] > rot_matrix_.md[i][i]) i = 2;
+
+			switch (i)
+			{
+			case 0:
+				s = sqrtf(rot_matrix_.md[0][0] - rot_matrix_.md[1][1] + rot_matrix_.md[2][2] + 1.0f);
+				q.x = 0.5f * s;
+				s = 0.5f / s;
+				q.y = (rot_matrix_.md[0][1] + rot_matrix_.md[1][0]) * s;
+				q.z = (rot_matrix_.md[2][0] + rot_matrix_.md[0][2]) * s;
+				q.w = (rot_matrix_.md[2][1] - rot_matrix_.md[1][2]) * s;
+				break;
+			case 1:
+				s = sqrtf(rot_matrix_.md[1][1] - rot_matrix_.md[2][2] + rot_matrix_.md[0][0] + 1.0f);
+				q.y = 0.5f * s;
+				s = 0.5f / s;
+				q.z = (rot_matrix_.md[1][2] + rot_matrix_.md[2][1]) * s;
+				q.x = (rot_matrix_.md[0][1] + rot_matrix_.md[1][0]) * s;
+				q.w = (rot_matrix_.md[0][2] - rot_matrix_.md[2][0]) * s;
+				break;
+			case 2:
+				s = sqrtf(rot_matrix_.md[2][2] - rot_matrix_.md[0][0] + rot_matrix_.md[1][1] + 1.0f);
+				q.z = 0.5f * s;
+				s = 0.5f / s;
+				q.x = (rot_matrix_.md[2][0] + rot_matrix_.md[0][2]) * s;
+				q.y = (rot_matrix_.md[1][2] + rot_matrix_.md[2][1]) * s;
+				q.w = (rot_matrix_.md[1][0] - rot_matrix_.md[0][1]) * s;
+				break;
+			}
+		}
+		return q;
 	}
 
 } //namespace zg
