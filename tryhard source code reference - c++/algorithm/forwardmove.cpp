@@ -104,3 +104,58 @@ namespace zg
     return static_cast<rvalueref>(value);
   }
 }
+
+//int main()
+//{
+//  obj1 a;
+//	obj2 b; //invoke the default constructor
+//	
+//  std::cout << "Test 1: \n";
+//  
+//  std::cout << "b1 zg::forward: ";
+//  obj2 b1 { zg::forward<obj2>(b) };
+//  std::cout << "b2 std::forward: ";
+//  obj2 b2 { std::forward<obj2>(b) };
+//  
+//  std::cout << "b3 zg::forward: ";
+//  obj2 b3 { zg::forward<obj2&>(b) };
+//  std::cout << "b4 std::forward: ";
+//  obj2 b4 { std::forward<obj2&>(b) };
+//  
+//  std::cout << "b5 zg::forward: ";
+//  obj2 b5 { zg::forward<obj2&&>(b) };
+//  std::cout << "b6 std::forward: ";
+//  obj2 b6 { std::forward<obj2&&>(b) };
+//  
+//  std::cout << "b7 copy ";
+//  obj2 b7 { b };
+//  
+//  std::cout << "b8 zg::move: ";
+//  obj2 b8 { zg::move(b) };
+//  std::cout << "b9 std::move: ";
+//  obj2 b9 { std::move(b) };
+//  
+//  std::cout << "b10 zg::forward: ";
+//  obj2 b10 { zg::forward<obj1&>(a) };
+//  std::cout << "b11 std::forward: ";
+//  obj2 b11 { std::forward<obj1&>(a) };
+//  
+//  std::cout << "b12 zg::forward: ";
+//  obj2 b12 { zg::forward<obj1&&>(a) };
+//  std::cout << "b13 std::forward: ";
+//  obj2 b13 { std::forward<obj1&&>(a) };
+//  
+//  std::cout << "b14 zg::move: ";
+//  obj2 b14 { zg::move(a) };
+//  std::cout << "b15 std::move: ";
+//  obj2 b15 { std::move(a) };
+//  
+//	int x;
+//  int         yy    = zg::move(x);
+//	const int&& crrx  = zg::move(x);
+//	int&&       rrx   = zg::move(x);
+//	//int&        erx   = zg::move(x);        //compile error
+//	//int&        efrx  = zg::forward<int>(x);//compile error
+//	int&        frx   = zg::forward<int&>(x); 
+//	int&        rx    = rrx; 
+//}
