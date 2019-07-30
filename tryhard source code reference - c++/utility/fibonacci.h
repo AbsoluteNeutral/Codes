@@ -1,5 +1,5 @@
-#ifndef _ZG_FACTORIAL_H
-#define _ZG_FACTORIAL_H
+#ifndef _ZG_FIBONACCI_H
+#define _ZG_FIBONACCI_H
 
 #include <vector>
 
@@ -67,4 +67,4 @@ std::vector<T> GetFibonacciSequence(unsigned N)
   return tmp;
 }
 
-#endif //_ZG_FACTORIAL_H
+#endif //_ZG_FIBONACCI_H
