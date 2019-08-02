@@ -1,25 +1,22 @@
 /*****************************************************************************/
 /*!
-\file		IMath.h
+\file		  ZGMath.h
 \brief		Header file consist of all math lib
 Uploaded: 18 May 2019
 */
 /*****************************************************************************/
-#ifndef _IMATH_H
-#define _IMATH_H
+#ifndef _ZGMATH_H
+#define _ZGMATH_H
 
-#include "Reals.h"
-#include "Color.h"
-
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Quaternion.h"
-
-#include "Matrix33.h"
-#include "Matrix44.h"
-
-#include "Transform.h"
+#include "./math/Reals.h"
+#include "./math/Color.h"
+#include "./math/Vector2.h"
+#include "./math/Vector3.h"
+#include "./math/Vector4.h"
+#include "./math/Quaternion.h"
+#include "./math/Matrix33.h"
+#include "./math/Matrix44.h"
+#include "./math/Transform.h"
 //#include "Geometry.h"
 
-#endif //_IMATH_H
+#endif //_ZGMATH_H
