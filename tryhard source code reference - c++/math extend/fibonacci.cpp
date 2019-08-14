@@ -1,28 +1,27 @@
 #include "fibonacci.h"
 
-unsigned GetFibonacci(unsigned N)
-{
-  if(N == 0) return 0;
-  if(N == 1) return 1;
-  unsigned fib0 = 0;
-  unsigned fib1 = 1;
-  unsigned tmp  = fib1;
-  --N;
-  while(--N)
+namespace zg{
+  unsigned Fibonacci(unsigned N)
   {
-    tmp  = fib1;
-    fib1 += fib0;
-    fib0 = tmp;
+    if(N == 0) return 0;
+    if(N == 1) return 1;
+    unsigned fib0 = 0;
+    unsigned fib1 = 1;
+    unsigned tmp  = fib1;
+    --N;
+    while(--N)
+    {
+      tmp  = fib1;
+      fib1 += fib0;
+      fib0 = tmp;
+    }
+    return fib0 + fib1;
   }
-  return fib0 + fib1;
-}
+}//namespace zg
 
-
-//#include <iostream>
 //#define _TEST_THIS 1
-
 #ifdef _TEST_THIS
-
+#include <iostream>
 /* Recursive */
 unsigned FibonacciRecursive(unsigned N)
 {
@@ -82,13 +81,13 @@ void PrintVector(const std::vector<T>& vec_)
 
 int main()
 {
-  std::cout << Fibonacci<0>::val  << " " << FibonacciRecursive(0)  << " " << FibonacciItreativeWhile(0) << " " << FibonacciItreativeFor(0) << std::endl;
-	std::cout << Fibonacci<1>::val  << " " << FibonacciRecursive(1)  << " " << FibonacciItreativeWhile(1) << " " << FibonacciItreativeFor(1) << std::endl;
-  std::cout << Fibonacci<2>::val  << " " << FibonacciRecursive(2)  << " " << FibonacciItreativeWhile(2) << " " << FibonacciItreativeFor(2) << std::endl;	
-  std::cout << Fibonacci<3>::val  << " " << FibonacciRecursive(3)  << " " << FibonacciItreativeWhile(3) << " " << FibonacciItreativeFor(3) << std::endl;	
-  std::cout << Fibonacci<10>::val << " " << FibonacciRecursive(10) << " " << FibonacciItreativeWhile(10)<< " " << FibonacciItreativeFor(10) << std::endl;
+  std::cout << zg::TFibonacci<0>::val  << " " << FibonacciRecursive(0)  << " " << FibonacciItreativeWhile(0) << " " << FibonacciItreativeFor(0) << std::endl;
+	std::cout << zg::TFibonacci<1>::val  << " " << FibonacciRecursive(1)  << " " << FibonacciItreativeWhile(1) << " " << FibonacciItreativeFor(1) << std::endl;
+  std::cout << zg::TFibonacci<2>::val  << " " << FibonacciRecursive(2)  << " " << FibonacciItreativeWhile(2) << " " << FibonacciItreativeFor(2) << std::endl;	
+  std::cout << zg::TFibonacci<3>::val  << " " << FibonacciRecursive(3)  << " " << FibonacciItreativeWhile(3) << " " << FibonacciItreativeFor(3) << std::endl;	
+  std::cout << zg::TFibonacci<10>::val << " " << FibonacciRecursive(10) << " " << FibonacciItreativeWhile(10)<< " " << FibonacciItreativeFor(10) << std::endl;
 
-  auto get = GetFibonacciSequence(10);
+  auto get = zg::GetFibonacciSequence(10);
   PrintVector(get);
 }
 
