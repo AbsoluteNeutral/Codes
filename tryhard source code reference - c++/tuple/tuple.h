@@ -1,4 +1,5 @@
-#include <iostream>
+#ifndef _ZG_TUPLE_H
+#define _ZG_TUPLE_H
 
 namespace zg
 {
@@ -97,17 +98,4 @@ namespace zg
 }
 
 
-
-int main()
-{
-  zg::Tuple<int, float, double> a {1, 2.2f, 3.4};
-  std::cout << zg::get<0>(a) << std::endl;
-	std::cout << zg::get<1>(a) << std::endl;
-  std::cout << zg::get<2>(a) << std::endl;	
-  std::cout << zg::get<2>(a) << std::endl;	
-  
-  auto copied = zg::make_tuple(1, 2.4f, 3.5);
-  std::cout << zg::get<0>(copied) << std::endl;
-	std::cout << zg::get<1>(copied) << std::endl;
-  std::cout << zg::get<2>(copied) << std::endl;	
-}
+#endif // _ZG_TUPLE_H

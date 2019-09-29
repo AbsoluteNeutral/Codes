@@ -1,4 +1,5 @@
-#include <iostream>
+#ifndef _ZG_SIMPLE_TUPLE_H
+#define _ZG_SIMPLE_TUPLE_H
 
 namespace zg
 {
@@ -29,18 +30,6 @@ namespace zg
   {
     return simpleTuple<Args...>{args...};
   }
-}
+}//namespace zg
 
-
-int main()
-{
-  zg::simpleTuple<int, float, double> value {1, 2.2f, 3.4};
-  std::cout << value.val << std::endl;
-	std::cout << value.next.val << std::endl;
-	std::cout << value.next.next.val << std::endl;
-	
-	auto copied = zg::make_simple_tuple(1, 2.4f, 3.5);
-	std::cout << copied.val << std::endl;
-	std::cout << copied.next.val << std::endl;
-	std::cout << copied.next.next.val << std::endl;
-}
+#endif //_ZG_SIMPLE_TUPLE_H
