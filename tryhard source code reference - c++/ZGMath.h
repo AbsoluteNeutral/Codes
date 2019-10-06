@@ -1,15 +1,8 @@
-#ifndef _ZGMATH_H
-#define _ZGMATH_H
+#ifndef _ZG_MATH_H
+#define _ZG_MATH_H
 
-#include "./math/Reals.h"
-#include "./math/Color.h"
-#include "./math/Vector2.h"
-#include "./math/Vector3.h"
-#include "./math/Vector4.h"
-#include "./math/Quaternion.h"
-#include "./math/Matrix33.h"
-#include "./math/Matrix44.h"
-#include "./math/Transform.h"
+#include "./math/reals.h"
 //#include "Geometry.h"
 
-#endif //_ZGMATH_H
+
+#endif //_ZG_MATH_H
