@@ -1,3 +1,4 @@
+
 #include "factorial.h"
 
 namespace zg{
@@ -66,6 +67,8 @@ void PrintVector(const std::vector<T>& vec_)
 
 int main()
 {
+  printf("Running factorial.cpp...\n\n");
+
   std::cout << "TFactorial " << "FactorialRecursive "  << "FactorialItreativeWhile " << "FactorialItreativeFor" << std::endl;
   std::cout << zg::TFactorial<0>::val  << " " << FactorialRecursive(0)  << " " << FactorialItreativeWhile(0) << " " << FactorialItreativeFor(0) << std::endl;
 	std::cout << zg::TFactorial<1>::val  << " " << FactorialRecursive(1)  << " " << FactorialItreativeWhile(1) << " " << FactorialItreativeFor(1) << std::endl;

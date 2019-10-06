@@ -116,6 +116,14 @@ namespace zg {
 		return os;
 	}
 	
+	Color Color255(int r_, int g_, int b_)
+	{
+		return Color(r_ * INV_255F, g_ * INV_255F, b_ * INV_255F, 1.0f);
+	}
+	Color Color255(int r_, int g_, int b_, int a_)
+	{
+		return Color(r_ * INV_255F, g_ * INV_255F, b_ * INV_255F, a_ * INV_255F);
+	}
 	Color Lerp(const Color& start_, const Color& end_, float time_) {
 		// Imprecise method, which does not guarantee v = v1 when t = 1, due to floating-point arithmetic error.
 		// This form may be used when the hardware has a native fused multiply-add instruction.

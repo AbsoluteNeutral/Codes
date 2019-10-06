@@ -1,71 +1,182 @@
+
 #ifndef _ZG_BITSET_H_
 #define _ZG_BITSET_H_
 
 #include <stdio.h>
+#include <iostream>
 #include <string>
 
 namespace zg
 {
-    static void Print_BuiltInTypeSize()
-    {
-        printf("bool:                   %lu \n", sizeof(bool));
-        printf("char:                   %lu \n", sizeof(char));
-        printf("short:                  %lu \n", sizeof(short));
-        printf("int:                    %lu \n", sizeof(int));
-        printf("long int:               %lu \n", sizeof(long int));
-        printf("long long int:          %lu \n", sizeof(long long int));
-
-        printf("unsigned char:          %lu \n", sizeof(unsigned char));
-        printf("unsigned short:         %lu \n", sizeof(unsigned short));
-        printf("unsigned int:           %lu \n", sizeof(unsigned int));
-        printf("unsigned long int:      %lu \n", sizeof(unsigned long int));
-        printf("unsigned long long int: %lu \n", sizeof(unsigned long long int));
-
-        printf("float:                  %lu \n", sizeof(float));
-        printf("double:                 %lu \n", sizeof(double));
-        printf("long double:            %lu \n", sizeof(long double));
-    }
-
     static const char HexChar[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-    std::string ConvertToBinary(unsigned number_)
+    template<unsigned N>
+    class Bitset
     {
-        char tmp[33];
-        for(int i = 0; i < 32; ++i)
+
+    public:
+    	template<typename T>
+    	Bitset(T number_)
+    		:binarystring{}
+    	{
+    		int maxsize = sizeof(T) * 8;
+    		int getmin = N <= maxsize ? N : maxsize;
+
+    		unsigned long castNumber = *reinterpret_cast<unsigned long*>(&number_);
+
+    		int i = 0;
+        	for(; i < getmin; ++i)
+        	{
+        	    binarystring[N - i - 1] = HexChar[ (castNumber >> i) & 1 ];
+        	}
+        	int j = getmin;
+        	for(; j < N; ++j)
+        	{
+        	    binarystring[N - j - 1] = HexChar[0];
+        	}
+    		binarystring[N] = '\0';
+    	}
+
+    	std::string GetBinaryString() const
+    	{
+    		return std::string{ binarystring };
+    	}
+
+    	friend std::ostream& operator<<(std::ostream& os, const Bitset& b_)
+    	{
+			printf("%s ", b_.binarystring);
+			return os;
+    	}
+
+	private:
+    	char binarystring[N + 1];
+    };
+
+    template<unsigned N>
+    class TriBitset
+    {
+
+    public:
+    	template<typename T>
+    	TriBitset(T number_)
+    		:binarystring{}
+    	{
+    		unsigned long castNumber = *reinterpret_cast<unsigned long *>(&number_);
+
+    		int maxsize = sizeof(T) * 8;
+    		int getmin  = N <= maxsize ? N : maxsize;
+        	for(int i = 0; i < getmin; ++i)
+        	{
+        	    binarystring[N - i - 1] = HexChar[ (castNumber >> i) & 1 ];
+        	}
+        	for(int j = getmin; j < N; ++j)
+        	{
+        	    binarystring[N - j - 1] = HexChar[0];
+        	}
+    		binarystring[N] = '\0';
+
+    		//Oct
+    		int NumberOfOct = (N / 3) + ((N % 3) ? 1 : 0);; //round up
+    		int getminOct = NumberOfOct <= 21 ? NumberOfOct : 21;
+    		char tmpO[NumberOfOct + 1];
+        	for(int i = 0; i < getminOct; ++i)
+        	{
+        	    tmpO[NumberOfOct - i - 1] = HexChar[ (castNumber >> (i * 3)) & 0x7 ];
+        	}
+        	for(int j = getminOct; j < N; ++j)
+        	{
+        	    tmpO[NumberOfOct - j - 1] = HexChar[0];
+        	}
+        	tmpO[NumberOfOct] = '\0';
+        	octstring = tmpO;
+
+        	//Hex
+    		int NumberOfHex = (N >> 2) + ((N % 4) ? 1 : 0); //round up
+    		int getminHex = 16 <= NumberOfHex ? 16 : NumberOfHex;
+    		char tmpH[NumberOfHex + 1];
+        	for(int i = 0; i < getminHex; ++i)
+        	{
+        	    tmpH[NumberOfHex - i - 1] = HexChar[ (castNumber >> (i * 4)) & 0xF ];
+        	}
+        	for(int j = getminHex; j < N; ++j)
+        	{
+        	    tmpH[NumberOfHex - j - 1] = HexChar[0];
+        	}
+        	tmpH[NumberOfHex] = '\0';
+        	hexstring = tmpH;
+    	}
+
+    	std::string GetBinaryString() const
+    	{
+    		return std::string{ binarystring };
+    	}
+
+    	std::string GetOctString() const
+    	{
+    		return octstring;
+    	}
+
+    	std::string GetHexString() const
+    	{
+    		return hexstring;
+    	}
+
+    	friend std::ostream& operator<<(std::ostream& os, const TriBitset& b_)
+    	{
+			printf("%s\n", b_.binarystring);
+			printf("%s\n", b_.octstring.c_str());
+			printf("0x%s", b_.hexstring.c_str());
+			return os;
+    	}
+
+	private:
+    	char binarystring[N + 1];
+    	std::string octstring;
+    	std::string hexstring;
+    };
+
+
+    void Print_BuiltInTypeSize();
+    
+    template<typename T>
+    T ConvertToDecimal(const char* string_, size_t length)
+    {
+        unsigned long tmp = 0;
+        unsigned long bit = 1;
+   
+        for(size_t i = length; i > 0; --i)
         {
-            tmp[32 - i - 1] = HexChar[ (number_ >> i) & 1 ];
+            tmp |= (string_[i - 1] == '1') ? (bit << (length - i)) : 0;
         }
-        tmp[32] = '\0';
-        return std::string{ tmp };
+
+        return *reinterpret_cast<T *>(&tmp);
     }
-    std::string ConvertToBinary(int number_)
+    template<typename T>
+    T ConvertToDecimal(const std::string& binarystring)
     {
-        return ConvertToBinary(*reinterpret_cast<unsigned*>(&number_));
-    }
-    std::string ConvertToBinary(float number_)
-    {
-        return ConvertToBinary(*reinterpret_cast<unsigned*>(&number_));
+        return ConvertToDecimal<T>(binarystring.c_str(), binarystring.size());
     }
 
-    std::string ConvertToHex(unsigned number_)
-    {
-        char tmp[9];
-        for(int i = 0; i < 8; ++i)
-        {
-            tmp[7 - i] = HexChar[ (number_ >> (i * 4)) & 0xF ];
-        }
-        tmp[8] = '\0';
-        return "0x" + std::string{ tmp };
-    }
-    std::string ConvertToHex(int number_)
-    {
-        return ConvertToHex(*reinterpret_cast<unsigned*>(&number_));
-    }
-    std::string ConvertToHex(float number_)
-    {
-        return ConvertToHex(*reinterpret_cast<unsigned*>(&number_));
-    }
+    std::string ConvertToBinary	(unsigned number_);
+    std::string ConvertToBinary	(int number_);
+    std::string ConvertToBinary	(float number_);
+    std::string ConvertToBinary	(unsigned long number_);
+    std::string ConvertToBinary	(long number_);
+    std::string ConvertToBinary	(double number_);
 
+    std::string ConvertToOct	(unsigned number_);
+    std::string ConvertToOct	(int number_);
+    std::string ConvertToOct	(float number_);
+    std::string ConvertToOct	(unsigned long number_);
+    std::string ConvertToOct	(long number_);
+    std::string ConvertToOct	(double number_);
+
+    std::string ConvertToHex	(unsigned number_);
+    std::string ConvertToHex	(int number_);
+    std::string ConvertToHex	(float number_);
+    std::string ConvertToHex	(unsigned long number_);
+    std::string ConvertToHex	(long number_);
+    std::string ConvertToHex	(double number_);
 }
 
 #endif //_ZG_BITSET_H_

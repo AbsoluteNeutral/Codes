@@ -65,6 +65,8 @@ namespace zg {
 
 	};
 
+	ZG_API Color Color255(int r_, int g_, int b_);
+	ZG_API Color Color255(int r_, int g_, int b_, int a_);
 	ZG_API Color Lerp(const Color& start_, const Color& end_, float time_);
 
 } //namespace zg

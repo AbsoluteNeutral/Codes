@@ -1,3 +1,4 @@
+
 #ifndef _ZG_FACTORIAL_H
 #define _ZG_FACTORIAL_H
 
