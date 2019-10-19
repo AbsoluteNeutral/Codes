@@ -1,11 +1,6 @@
-/*****************************************************************************/
-/*!
-\file	Logging.h
-\brief	Logging using printf and Error checking, delete safe and free safe
-*/
-/*****************************************************************************/
-#ifndef _LOGGING_H
-#define _LOGGING_H
+
+#ifndef _ZG_LOGGING_H
+#define _ZG_LOGGING_H
 
 #include <stdio.h>
 
@@ -120,4 +115,4 @@ do { G_DEBUG_BREAK; PrintError(__VA_ARGS__); fprintf(stderr, "\n"); } while(gCon
     return whatToReturn;                         \
   } } while(gConditionalFalseConstant)			 
 
-#endif //_LOGGING_H
+#endif //_ZG_LOGGING_H

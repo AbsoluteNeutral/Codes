@@ -1,3 +1,4 @@
+
 #ifndef _ZG_LIST_H
 #define _ZG_LIST_H
 
@@ -283,7 +284,5 @@ namespace zg
 	};
 
 } // namespace zg
-
-
 
 #endif //_UNITSTEST

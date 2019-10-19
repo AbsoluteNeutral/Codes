@@ -1,2 +1,2 @@
-sh ./runtest_bitset.sh
-sh ./runtest_endian.sh
+sh ./runtest_bitset.sh  \n
+sh ./runtest_endian.sh  \n

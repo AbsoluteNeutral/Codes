@@ -1,16 +1,10 @@
-/*****************************************************************************/
-/*!
-\file	Logging.cpp
-\brief	Logging using printf and Error checking, delete safe and free safe
-*/
-/*****************************************************************************/
+
 #include "stdafx.h"
 
 #include <assert.h>
 #include <Windows.h>
 #include "Logging.h"
 #pragma comment(lib, "user32.lib")
-
 
 void SignalBox(const char* msg, const char* functionName_, bool iserror){
 	char finalMsg[512];
