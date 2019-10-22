@@ -4,15 +4,16 @@
 
 #include <iostream>
 #include <iterator>
-#include "zgAllocator.h"
 
-#define _USEALLOCATOR_ 1
+//#include "zgAllocator.h"
+//#define _USEALLOCATOR_ 1
+//#define _USE_PLACEMENT_NEW 1
 
 namespace zg 
 {
 	//__________________________________________________ Class
 	template<typename T>
-	class ZG_API list
+	class list
 	{
 		struct Node 
 		{
@@ -34,17 +35,27 @@ namespace zg
 
 		Node* newNode(const T&  value_)
 		{
+      Node *pNode = nullptr;
 #if _USEALLOCATOR_
-			Node* pNode = AllocateMalloc<Node>(1);
-			new (pNode) Node { value_ };
-			++sz;            //count the size of list
-			return pNode;
+			//pNode = AllocateMalloc<Node>(1);
+			//new (pNode) Node { value_ };
+#elif _USE_PLACEMENT_NEW
+    try{
+      pNode = static_cast<Node*>(malloc(sizeof(Node)));
+      new (pNode) Node { value_ };
+    }catch(...){
+      throw "List Malloc failed"
+    }
 #else
-			Node *pNode = new Node{ value_ };
-			++sz;            //count the size of list
-			return pNode;
+    try{
+      pNode = new Node{ value_ };
+    }catch(...){
+      throw "List Malloc failed"
+    }
+    
 #endif
-			
+      ++sz;            //count the size of list
+			return pNode;
 		}
 
 	public:
@@ -123,6 +134,8 @@ namespace zg
 				root = root->next;
 #if _USEALLOCATOR_
 				DeallocateMalloc(toRemove);
+#elif _USE_PLACEMENT_NEW
+        free(toRemove);
 #else
 				delete toRemove;            //free current Node
 #endif
@@ -284,5 +297,7 @@ namespace zg
 	};
 
 } // namespace zg
+
+
 
 #endif //_UNITSTEST
