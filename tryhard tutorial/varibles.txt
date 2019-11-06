@@ -1,0 +1,60 @@
+Syntax:
+
+int I_AM_a_VAR;
+int _IAMOK_2;
+int _1234_OK;
+
+int I-am-Error;	//compile_error, ‘-‘ is an operator
+int 2_AsaC_ERROR; //compile_error, ‘2’ is a number at the front
+
+Declaration/un-Initialize:
+
+int a;
+float b;
+
+
+Initialization:
+
+int a = 10;
+float b = 10.0f;
+
+Assignment/Assignment:
+
+a = 20;
+b = 20.0f;
+
+	
+-------------------------------------------------------------------------
+
+
+Declaration + Definition
+
+in .h file:
+
+extern int a;				// Declaration
+extern static float b;
+
+struct A
+{
+	static int iampublicdefault;		// Users have access
+private:
+	static int iamprivate;			// Users have no access
+};
+
+class B
+{
+	static int iamprivatedefault;	// Users have no access
+public:
+	static int iampublic;			// Users have access
+};
+
+
+in .cpp file
+
+int a = 10;					// Definition 
+static float b = 10.0f;
+static int A::iampublicdefault = 10;
+static int A::iamprivate = 10;
+static int B::iamprivatedefault = 10;
+static int B::iampublic = 10;
+

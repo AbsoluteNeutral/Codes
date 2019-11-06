@@ -1,0 +1,34 @@
+1. What is a C program?
+-	It’s Just a Text File
+-	Understandable format language
+-	What we refer to as High-Level language OR Human readable language
+
+
+
+
+2. What is RAM? 
+-	Random Access Memory
+-	It’s computer memory
+
+
+
+
+3. Basic Cycle of how computer made:
+-	Fetch -> Decode -> Execute -> Write Back
+
+-	Fetch = Fetch from Memory which will be sent to -> Control Unit (ALU)
+- 	Decode = Break down Low-level Language from Memory to OPCODE and OPPREANDS
+- 	Execute = Compute the instruction using ALU
+- 	Write Back = Send result
+
+
+
+
+4. What is ASCII?
+Idea to represent each character with 8 bit (0-255)
+0-127 	(Readable Character)
+128-255 	(Unreadable Character) 
+
+
+
+
