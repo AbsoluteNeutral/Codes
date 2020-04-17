@@ -19,8 +19,20 @@ namespace zg{
     
     bool IsLittleEndian()
     {
-        int a = 1;
-        return *reinterpret_cast<char*>(&a) == 1;
+      /*
+      Little Endian
+      -> casting starts here memory : low  0x01
+                          in memory :      0x00
+                          in memory :      0x00
+                          in memory : high 0x00
+      Big Endian
+      -> casting starts here memory : low  0x00
+                          in memory :      0x00
+                          in memory :      0x00
+                          in memory : high 0x01
+      */
+      int a = 1; //0x00000001 (store in memory of 4 bytes)
+      return *reinterpret_cast<char*>(&a) == 1;
     }
 
     unsigned FlipEndian(unsigned number)
