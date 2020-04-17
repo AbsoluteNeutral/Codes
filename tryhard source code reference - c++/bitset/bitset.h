@@ -10,6 +10,7 @@ namespace zg
 {
     static const char HexChar[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
+    //this class print Binary, with different number of bits (N)
     template<unsigned N>
     class Bitset
     {
@@ -52,6 +53,7 @@ namespace zg
     	char binarystring[N + 1];
     };
 
+    //this class prints all 3 mode, BIN, OCT, HEX
     template<unsigned N>
     class TriBitset
     {
@@ -123,10 +125,10 @@ namespace zg
 
     	friend std::ostream& operator<<(std::ostream& os, const TriBitset& b_)
     	{
-			printf("%s\n", b_.binarystring);
-			printf("%s\n", b_.octstring.c_str());
-			printf("0x%s", b_.hexstring.c_str());
-			return os;
+        printf("%s\n", b_.binarystring);
+        printf("%s\n", b_.octstring.c_str());
+        printf("0x%s", b_.hexstring.c_str());
+        return os;
     	}
 
 	private:
@@ -135,9 +137,6 @@ namespace zg
     	std::string hexstring;
     };
 
-
-    void Print_BuiltInTypeSize();
-    
     template<typename T>
     T ConvertToDecimal(const char* string_, size_t length)
     {
@@ -156,20 +155,22 @@ namespace zg
     {
         return ConvertToDecimal<T>(binarystring.c_str(), binarystring.size());
     }
+    
+    void Print_BuiltInTypeSize();
 
     std::string ConvertToBinary	(unsigned number_);
     std::string ConvertToBinary	(int number_);
-    std::string ConvertToBinary	(float number_);
+    std::string ConvertToBinary	(float number_);          
     std::string ConvertToBinary	(unsigned long number_);
     std::string ConvertToBinary	(long number_);
-    std::string ConvertToBinary	(double number_);
+    std::string ConvertToBinary	(double number_);         
 
     std::string ConvertToOct	(unsigned number_);
     std::string ConvertToOct	(int number_);
-    std::string ConvertToOct	(float number_);
+    std::string ConvertToOct	(float number_);            //not needed
     std::string ConvertToOct	(unsigned long number_);
     std::string ConvertToOct	(long number_);
-    std::string ConvertToOct	(double number_);
+    std::string ConvertToOct	(double number_);           //not needed
 
     std::string ConvertToHex	(unsigned number_);
     std::string ConvertToHex	(int number_);
@@ -177,6 +178,13 @@ namespace zg
     std::string ConvertToHex	(unsigned long number_);
     std::string ConvertToHex	(long number_);
     std::string ConvertToHex	(double number_);
+    
+    std::string ConvertToBase(unsigned base, unsigned long number);
+    std::string ConvertToBase(unsigned base, unsigned number);
+    std::string ConvertToBase(unsigned base, int number);
+    std::string ConvertToBase(unsigned base, float number);         //not needed
+    std::string ConvertToBase(unsigned base, long number);
+    std::string ConvertToBase(unsigned base, double number);        //not needed
 }
 
 #endif //_ZG_BITSET_H_

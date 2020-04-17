@@ -24,6 +24,41 @@ namespace zg{
         printf("long double:        %lu Byte, \n", sizeof(long double));
     }
 
+    std::string ConvertToBase(unsigned base_, unsigned long number_)
+    {
+      std::string s;
+      while(number_ >= base_)
+      {
+        unsigned long prevNum   = number_ / base_;
+        unsigned long remainder = number_ % base_;
+  
+        s.insert(0, 1, HexChar[remainder]);
+        number_ = prevNum;
+      }
+      s.insert(0, 1, HexChar[number_]);
+      return s;
+    }
+    std::string ConvertToBase(unsigned base_, unsigned number_)
+    {
+        return ConvertToBase(base_, *reinterpret_cast<unsigned long*>(&number_));
+    }
+    std::string ConvertToBase(unsigned base_, int number_)
+    {
+        return ConvertToBase(base_, *reinterpret_cast<unsigned long*>(&number_));
+    }
+    std::string ConvertToBase(unsigned base_, float number_)
+    {
+        return ConvertToBase(base_, *reinterpret_cast<unsigned long*>(&number_));
+    }
+    std::string ConvertToBase(unsigned base_, long number_)
+    {
+        return ConvertToBase(base_, *reinterpret_cast<unsigned long *>(&number_));
+    }
+    std::string ConvertToBase(unsigned base_, double number_)
+    {
+        return ConvertToBase(base_, *reinterpret_cast<unsigned long *>(&number_));
+    }
+    
     std::string ConvertToBinary(unsigned number_)
     {
         char tmp[33];
@@ -34,14 +69,6 @@ namespace zg{
         tmp[32] = '\0';
         return std::string{ tmp };
     }
-    std::string ConvertToBinary(int number_)
-    {
-        return ConvertToBinary(*reinterpret_cast<unsigned *>(&number_));
-    }
-    std::string ConvertToBinary(float number_)
-    {
-        return ConvertToBinary(*reinterpret_cast<unsigned *>(&number_));
-    }
     std::string ConvertToBinary(unsigned long number_)
     {
         char tmp[65];
@@ -51,6 +78,14 @@ namespace zg{
         }
         tmp[64] = '\0';
         return std::string{ tmp };
+    }
+    std::string ConvertToBinary(int number_)
+    {
+        return ConvertToBinary(*reinterpret_cast<unsigned *>(&number_));
+    }
+    std::string ConvertToBinary(float number_)
+    {
+        return ConvertToBinary(*reinterpret_cast<unsigned *>(&number_));
     }
     std::string ConvertToBinary(long number_)
     {
@@ -72,14 +107,6 @@ namespace zg{
         tmp[11] = '\0';
         return std::string{ tmp };
     }
-    std::string ConvertToOct(int number_)
-    {
-        return ConvertToOct(*reinterpret_cast<unsigned *>(&number_));
-    }
-    std::string ConvertToOct(float number_)
-    {
-        return ConvertToOct(*reinterpret_cast<unsigned *>(&number_));
-    }
     std::string ConvertToOct(unsigned long number_)
     {
         char tmp[23];
@@ -89,6 +116,14 @@ namespace zg{
         }
         tmp[22] = '\0';
         return std::string{ tmp };
+    }
+    std::string ConvertToOct(int number_)
+    {
+        return ConvertToOct(*reinterpret_cast<unsigned *>(&number_));
+    }
+    std::string ConvertToOct(float number_)
+    {
+        return ConvertToOct(*reinterpret_cast<unsigned *>(&number_));
     }
     std::string ConvertToOct(long number_)
     {
@@ -110,15 +145,7 @@ namespace zg{
         tmp[8] = '\0';
         return "0x" + std::string{ tmp };
     }
-    std::string ConvertToHex(int number_)
-    {
-        return ConvertToHex(*reinterpret_cast<unsigned *>(&number_));
-    }
-    std::string ConvertToHex(float number_)
-    {
-        return ConvertToHex(*reinterpret_cast<unsigned *>(&number_));
-    }
-        std::string ConvertToHex(unsigned long number_)
+    std::string ConvertToHex(unsigned long number_)
     {
         char tmp[17];
         for(int i = 0; i < 16; ++i)
@@ -127,6 +154,14 @@ namespace zg{
         }
         tmp[16] = '\0';
         return "0x" + std::string{ tmp };
+    }
+    std::string ConvertToHex(int number_)
+    {
+        return ConvertToHex(*reinterpret_cast<unsigned *>(&number_));
+    }
+    std::string ConvertToHex(float number_)
+    {
+        return ConvertToHex(*reinterpret_cast<unsigned *>(&number_));
     }
     std::string ConvertToHex(long number_)
     {
