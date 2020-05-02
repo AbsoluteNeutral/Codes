@@ -1,9 +1,4 @@
-/*****************************************************************************/
-/*!
-\file			Input.cpp
-\brief			WIN32 API Input System
-*/
-/*****************************************************************************/
+
 
 #include "stdafx.h"
 #include "Input.h"
@@ -69,6 +64,7 @@ void Input::UpdateScreenSize(int width_, int height_) {
 	halfscreen.y = height_ >> 1;
 }
 void Input::SystemUpdate(){
+
 	if (keyBoardFlicker)
 	{
 #ifdef _64BITMACHINE
@@ -150,7 +146,7 @@ void Input::SystemUpdate(){
 		currKeyboardState = keyBoardSwitch_0;	//set curr to 0
 	}
 
-	keyBoardFlicker = !keyBoardFlicker;
+	keyBoardFlicker = !keyBoardFlicker;			//toggling
 
 	prevMouseScreenPos = currMouseScreenPos;
 
@@ -296,21 +292,20 @@ bool Input::IsKeyRelease(unsigned int key) const {
 
 int* Input::GetRawAxis() {
 	POINT tmp = GetMouseDelta();
-
+	//x
 	if (tmp.x > 0)
 		rawAxis[0] = 1;
 	else if (tmp.x < 0)
 		rawAxis[0] = -1;
 	else
 		rawAxis[0] = 0;
-
+	//y
 	if (tmp.y > 0)
 		rawAxis[1] = 1;
 	else if (tmp.y < 0)
 		rawAxis[1] = -1;
 	else
 		rawAxis[1] = 0;
-
 	return rawAxis;
 }
 
@@ -323,10 +318,12 @@ void Input::LockCursor(bool toggle_) {
 	lockMouse = toggle_;
 }
 void Input::ShowMouseCursor(bool toggle_) {
+	//Show Cursor uses as a counter instead as a boolean
+	//this is why this if statment is needed
 	if (showingMouse == toggle_) return;
 
 	showingMouse = toggle_;
-	ShowCursor(toggle_);
+	ShowCursor(toggle_); 
 }
 
 bool Input::SystemExit(){

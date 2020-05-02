@@ -12,10 +12,10 @@
 #include "Reals.h"
 
 enum ZG_API TRANSFORM_FLAG_ENUM {
-	T_DIRTY				= 0x00000001,	//track wheather the matrix have been concatenated
-	T_STATIC			= 0x00000002,	//track to see if is a static transform, no update is needed throughout
-	T_YET_TOUPDATE		= 0x00000004,	//track wheather world coordinates have been updated, only applies to child transform
-	T_ISBONE			= 0x00000008	//track wheather if is a bone object, internal use only
+	T_DIRTY				= 0x00000001,	//whether the matrix have been concatenated
+	T_STATIC			= 0x00000002,	//whether is a static transform, no update is needed throughout
+	T_YET_TOUPDATE		= 0x00000004,	//whether world coordinates have been updated, only applies to 
+	T_ISBONE			= 0x00000008	//whether transform is a bone object, internal use only
 };
 
 class ZG_API Transform {
