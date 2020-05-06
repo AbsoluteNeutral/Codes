@@ -15,27 +15,21 @@
   
 namespace zg
 {
-  /*
-    default parent class
-  */
+  // default parent class
   template<typename T>
   struct remove_ref
   {
     using type = T;
   };
   
-  /*
-    specialize class to remove T&& 
-  */
+  // specialize class to remove T&& 
   template<typename T>
   struct remove_ref<T&&>
   {
     using type = T;
   };
   
-  /*
-    specialize class to remove T& 
-  */
+  //specialize class to remove T& 
   template<typename T>
   struct remove_ref<T&>
   {
@@ -43,15 +37,9 @@ namespace zg
   };
   
   
-  /*
-    forward lvalue as lvalue,
-    forward rvalue as rvalue
-  */
-  template<typename T>
-  //T&& forward(T& value)
-  T&& forward(typename remove_ref<T>::type& value)
-  {
-    /* 
+  //forward lvalue as lvalue,
+  //forward rvalue as rvalue
+	/* 
     Note:
       "typename remove_ref<T>::type" is a non-deduce context,
       forcing the function template to "act" like a class template.
@@ -94,7 +82,11 @@ namespace zg
       deduce:   return static_cast<T &&>(value);
       deduce:   return static_cast<obj1&& &&>(value);
       into->    return static_cast<obj1&&>(value);    (rvalue)
-    */
+  */
+  template<typename T>
+  //T&& forward(T& value)
+  T&& forward(typename remove_ref<T>::type& value)
+  {
     return static_cast<T&&>(value);
   }
   
@@ -109,7 +101,6 @@ namespace zg
   }
   
 }
-
 
 struct obj1 {};
 class obj2

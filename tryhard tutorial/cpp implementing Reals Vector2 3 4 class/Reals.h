@@ -1,28 +1,27 @@
-
+/*****************************************************************************/
+/*!
+\file		Reals.h
+\brief		Math Implmentation
+Uploaded: 18 May 2019
+*/
+/*****************************************************************************/
 #ifndef _REALS_H
 #define _REALS_H
 
-#include <cmath>    //sin, cos, tan 
+#include <cmath>
 #include <stdio.h>	//printf
 #include <limits>
 
 namespace zg
 {
 	//using double or float for vector classes
-  //this may not be necessary, but it is implemented in this class
 #ifdef _DOUBLE_PRECISION
 	typedef double realtype;
 #else
 	typedef float realtype;
 #endif
-
-  //this is useful for switching between OpenGL and directX
-	//using ROW or COL major for matrix
-	//#define ROW_MAJOR 1
-	#define COL_MAJOR 1
 }
 
-//undef for min max in <cmath>
 #ifdef min
 #undef min
 #endif
@@ -37,39 +36,37 @@ static const double MACHINE_EPSILON_D	= std::numeric_limits<double>::epsilon();
 
 #define EPSILON 0.000001f
 
-//math constant
 //double
-#define M_E         2.71828182845904523536   // e
-#define M_LOG2E     1.44269504088896340736   // log2(e)
-#define M_LOG10E    0.434294481903251827651  // log10(e)
-#define M_LN2       0.693147180559945309417  // ln(2)
-#define M_LN10      2.30258509299404568402   // ln(10)
-#define M_PI        3.14159265358979323846   // pi
-#define M_PI_2      1.57079632679489661923   // pi/2
-#define M_PI_4      0.785398163397448309616  // pi/4
-#define M_1_PI      0.318309886183790671538  // 1/pi
-#define M_2_PI      0.636619772367581343076  // 2/pi
-#define M_2_SQRTPI  1.12837916709551257390   // 2/sqrt(pi)
-#define M_SQRT2     1.41421356237309504880   // sqrt(2)
-#define M_SQRT1_2   0.707106781186547524401  // 1/sqrt(2)
-#define D_TWOPI     6.28318530718
-#define D_PI180     0.01745329251994329576924
+#define M_E        2.71828182845904523536   // e
+#define M_LOG2E    1.44269504088896340736   // log2(e)
+#define M_LOG10E   0.434294481903251827651  // log10(e)
+#define M_LN2      0.693147180559945309417  // ln(2)
+#define M_LN10     2.30258509299404568402   // ln(10)
+#define M_PI       3.14159265358979323846   // pi
+#define M_PI_2     1.57079632679489661923   // pi/2
+#define M_PI_4     0.785398163397448309616  // pi/4
+#define M_1_PI     0.318309886183790671538  // 1/pi
+#define M_2_PI     0.636619772367581343076  // 2/pi
+#define M_2_SQRTPI 1.12837916709551257390   // 2/sqrt(pi)
+#define M_SQRT2    1.41421356237309504880   // sqrt(2)
+#define M_SQRT1_2  0.707106781186547524401  // 1/sqrt(2)
+
+#define D_TWOPI 6.28318530718
+#define D_PI180 0.01745329251994329576924
 #define D_INV_PI180 57.2957795130823208768
 
 //float
-#define PI          3.14159265358979323846f
-#define TWOPI       6.28318530718f
-#define PI2         1.57079632679489661923f
-#define PI4         0.785398163397448309616f
-#define PI180       0.01745329251994329576924f
-#define INV_PI180   57.2957795130823208768f
+#define PI 3.14159265358979323846f
+#define TWOPI 6.28318530718f
+#define PI2 1.57079632679489661923f
+#define PI4 0.785398163397448309616f
+#define PI180 0.01745329251994329576924f
+#define INV_PI180 57.2957795130823208768f
 
-//max min ternary
 #define MAX2(a,b) (a > b ? a : b)
 #define MIN2(a,b) (a < b ? a : b)
 #define MAX3(a,b,c) (a < b ? (b < c ? c : b) : (a < c ? c : a))
 #define MIN3(a,b,c) (a < b ? (a < c ? a : c) : (b < c ? b : c))
-
 
 #define CHECK_NEG_ZERO(a) ((((a) > -EPSILON && (a) < EPSILON) ? 0.0f : (a)))
 #define CHECK_NEG_ZERO2(a) ((((a) == -0.0f) ? 0.0f : (a)))
@@ -77,10 +74,8 @@ static const double MACHINE_EPSILON_D	= std::numeric_limits<double>::epsilon();
 #define SMOOTHSTEP(x) ((x) * (x) * (3-2 * (x)))
 #define SMOOTHERSTEP(x) ((x) * (x) * ((x) * ((x) * 6 - 15) + 10))
 
-//floating point check isnan
-#define ISNAN(f) (f != f)	
+#define ISNAN(f) (f != f)	//float point check isnan
 
-//convert degree to radian, vice versa
 #define TO_RAD(a) ((a) * (PI180))
 #define TO_DEG(a) ((a) * (INV_PI180))
 
@@ -111,22 +106,22 @@ namespace zg {
 	float sqrt(float x);
 
 	//double
-	////Trigonometric 
-	//double sin(double x);
-	//double cos(double x);
-	//double tan(double x);
-	//double asin(double x);
-	//double acos(double x);
-	//double atan(double x);
-	//double atan2(double y, double x);
-	////Hyperbolic 
-	//double sinh(double x);
-	//double cosh(double x);
-	//double tanh(double x);
-	//double asinh(double x);
-	//double acosh(double x);
-	//double atanh(double x);
-	////Exponential and logarithmic
+	//Trigonometric 
+	double sin(double x);
+	double cos(double x);
+	double tan(double x);
+	double asin(double x);
+	double acos(double x);
+	double atan(double x);
+	double atan2(double y, double x);
+	//Hyperbolic 
+	double sinh(double x);
+	double cosh(double x);
+	double tanh(double x);
+	double asinh(double x);
+	double acosh(double x);
+	double atanh(double x);
+	//Exponential and logarithmic
 
 	//Power
 	double pow(double x, double exp);
@@ -173,7 +168,6 @@ namespace zg {
 		b = temp;
 	}
 
-  //write your own power 
 	template <typename T>
 	float pow(T value, unsigned int pow_) {
 		T temp;
@@ -213,3 +207,4 @@ namespace zg {
 }
 
 #endif
+

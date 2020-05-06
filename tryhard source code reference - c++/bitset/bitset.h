@@ -3,14 +3,14 @@
 #define _ZG_BITSET_H_
 
 #include <stdio.h>
-#include <iostream>
 #include <string>
 
 namespace zg
 {
+    //an static arry to grab hex value
     static const char HexChar[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-    //this class print Binary, with different number of bits (N)
+    // ########## this class print Binary, with different number of bits (N) ##########
     template<unsigned N>
     class Bitset
     {
@@ -53,11 +53,12 @@ namespace zg
     	char binarystring[N + 1];
     };
 
-    //this class prints all 3 mode, BIN, OCT, HEX
+    // custom class
+    // ########## this class prints all 3 mode, BIN, OCT, HEX ##########
     template<unsigned N>
     class TriBitset
     {
-
+      
     public:
     	template<typename T>
     	TriBitset(T number_)
@@ -137,6 +138,8 @@ namespace zg
     	std::string hexstring;
     };
 
+    // convert any base to Base 10 value
+    // T determin the output type 
     template<typename T>
     T ConvertToDecimal(const char* string_, size_t length)
     {
