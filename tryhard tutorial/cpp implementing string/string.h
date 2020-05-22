@@ -25,23 +25,25 @@ namespace zg
 		string& operator=		(string&& rhs_);			//move operator
 		string& operator+=	(const char* rhs_);
 		string& operator+=	(const string& rhs_);
-		
 		friend std::ostream& operator<<(std::ostream& os, const string& string_);
 		
-		void clear();
-		void pushback		(const char* string_);
-		void pushback		(const string& string_);
-		//__________________________________________________ Capacity
-		size_t		size() const;
-		size_t		length() const;
-
-		//__________________________________________________ Element access
 		const char& at		(size_t position_) const throw();
-		const char& back	() const;
-		const char& front	() const;
 		
+		char&				back	();
+		const char& back	() const;
+		
+		void 				clear	();
 		const char* cstr	() const;
 		const char* c_str	() const;
+		
+		char& 			front	();
+		const char& front	() const;
+		
+		void 				pushback(const char* string_);
+		void 				pushback(const string& string_);
+
+		size_t			length() const;
+		size_t			size() const;
 		
 	private:
 		char* buffer;
@@ -50,6 +52,4 @@ namespace zg
 
 } // namespace zg
 
-
-
-#endif //_UNITSTEST
+#endif
