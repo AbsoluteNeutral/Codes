@@ -1,12 +1,10 @@
-/*****************************************************************************/
-/*!
-\file			Transform.cpp
-\brief			Transform Implmentation
-*/
-/*****************************************************************************/
+
 #include "stdafx.h"
 #include "Transform.h"
-#include "Logging.h"
+#if defined(_DEBUG)
+	#include "Logging.h"
+#endif
+
 #ifdef min
 #undef min
 #endif
@@ -769,129 +767,3 @@ void RotateTowards(Transform& transform_, const zg::Vector3& target, float rate)
 {
 	transform_.RotateTowards(target, rate);
 }
-
-
-
-#ifdef USING_SOL2
-void Transform::BindLua(sol::state & lua)
-{
-	lua.new_usertype<Transform>("Transform",
-		sol::constructors <Transform(), Transform(const zg::Vector3&, const zg::Vector3&, const zg::Vector3&)>(),
-
-		"Attach", &Transform::Attach,
-		"Detach", &Transform::Detach,
-		"SetStatic", &Transform::SetStatic,
-		"HasUpdated", &Transform::HasUpdated,
-		"GetMatrix", &Transform::GetMatrix,
-		"GetLocalMatrix", &Transform::GetLocalMatrix,
-		"GetWorldMatrix", &Transform::GetWorldMatrix,
-
-		"LookAt", sol::overload(
-			static_cast<void (Transform::*)(const Transform&)>(&Transform::LookAt),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::LookAt)
-		),
-
-		"RotateTowards", sol::overload(
-			static_cast<void (Transform::*)(const Transform&, float)>(&Transform::RotateTowards),
-			static_cast<void (Transform::*)(const zg::Vector3&, float)>(&Transform::RotateTowards)
-		),
-
-		"RotateTowardsIgnoreHeight", sol::overload(
-			static_cast<void (Transform::*)(const Transform&, float)>(&Transform::RotateTowardsIgnoreHeight),
-			static_cast<void (Transform::*)(const zg::Vector3&, float)>(&Transform::RotateTowardsIgnoreHeight)
-		),
-
-		"Slerp", &Transform::Slerp,
-
-		"Forward", &Transform::Forward,
-		"Up", &Transform::Up,
-		"Right", &Transform::Right,
-
-		"SetPosition", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetPosition),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetPosition),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetPosition),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetPosition)
-		),
-		"SetRotation", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetRotation),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetRotation),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetRotation),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetRotation),
-			static_cast<void (Transform::*)(const zg::Quaternion&)>(&Transform::SetRotation)
-		),
-		"SetScale", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetScale),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetScale),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetScale),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetScale)
-		),
-		"Translate", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::Translate),
-			static_cast<void (Transform::*)(float, float)>(&Transform::Translate),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::Translate),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::Translate)
-		),
-		"Rotate", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::Rotate),
-			static_cast<void (Transform::*)(float, float)>(&Transform::Rotate),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::Rotate),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::Rotate)
-		),
-		"Scale", sol::overload(
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::Scale),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::Scale)
-		),
-		"SetUniformWorldScale2D", &Transform::SetUniformWorldScale2D,
-		"SetUniformWorldScale3D", &Transform::SetUniformWorldScale3D,
-
-		"SetLocalPosition", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetLocalPosition),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetLocalPosition),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalPosition),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetLocalPosition)
-		),
-		"SetLocalRotation", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetLocalRotation),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetLocalRotation),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalRotation),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetLocalRotation),
-			static_cast<void (Transform::*)(const zg::Quaternion&)>(&Transform::SetLocalRotation)
-		),
-		"SetLocalScale", sol::overload(
-			static_cast<void (Transform::*)(float)>(&Transform::SetLocalScale),
-			static_cast<void (Transform::*)(float, float)>(&Transform::SetLocalScale),
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalScale),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::SetLocalScale)
-		),
-		"SetUniformWorldScale2D", &Transform::SetUniformLocalScale2D,
-		"SetUniformWorldScale3D", &Transform::SetUniformLocalScale3D,
-		"LocalTranslate", sol::overload(
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::LocalTranslate),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::LocalTranslate)
-		),
-		"LocalRotate", sol::overload(
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::LocalRotate),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::LocalRotate)
-		),
-		"LocalScale", sol::overload(
-			static_cast<void (Transform::*)(float, float, float)>(&Transform::LocalScale),
-			static_cast<void (Transform::*)(const zg::Vector3&)>(&Transform::LocalScale)
-		),
-
-		//read-only varibles
-		"position", &Transform::position,
-		"scale", &Transform::scale,
-		"rotation", &Transform::rotation,
-		"rotation", &Transform::rotation,
-		"localPosition", &Transform::localPosition,
-		"localScale", &Transform::localScale,
-		"localRotation", &Transform::localRotation,
-		"localRotation", &Transform::localRotation,
-
-		//test
-		"ForceUpdate", &Transform::ForceUpdate,
-		"UpdateWithParent", &Transform::UpdateWithParent
-		);
-}
-#endif
